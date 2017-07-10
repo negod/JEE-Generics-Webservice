@@ -13,9 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  *
- * @author Joakim Johansson ( joakimjohansson@outlook.com )
+ * @author Joakim Johansson ( joakimjohansson@outlook.com ) {@inheritDoc}
  * @param <T>
- * @exclude
  *
  */
 @Slf4j
