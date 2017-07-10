@@ -2,6 +2,7 @@ package se.backede.webservice.service;
 
 import com.negod.generics.persistence.GenericDao;
 import com.negod.generics.persistence.entity.GenericEntity;
+import com.negod.generics.persistence.exception.DaoException;
 import com.negod.generics.persistence.search.GenericFilter;
 import java.util.List;
 import java.util.Optional;
@@ -20,14 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class GenericRestService<T extends GenericEntity> implements RestService<T> {
 
+    @Override
     public abstract GenericDao getDao();
 
     /**
-     * Creates an entity
-     *
-     * @param entity
-     * @return
+     * {@inheritDoc}
      */
+    @Override
     public Response create(T entity) {
         log.debug("Creating {} with values {}", getDao().getClassName(), entity.toString());
         try {
@@ -37,12 +37,16 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
             } else {
                 return Response.serverError().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             log.error("Error when creating {} with values {}", getDao().getClassName(), entity.toString(), e);
             return Response.serverError().build();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Response getAll() {
         try {
             log.debug("Getting all of type {}" + getDao().getClassName());
@@ -52,18 +56,16 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
             } else {
                 return Response.noContent().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             log.debug("Error when getting all of type {}", getDao().getClassName());
             return Response.serverError().build();
         }
     }
 
     /**
-     * Updates an entity
-     *
-     * @param entity
-     * @return
+     * {@inheritDoc}
      */
+    @Override
     public Response update(String id, T entity) {
         log.debug("Updating {} with values {}", getDao().getClassName(), entity.toString());
         try {
@@ -73,17 +75,16 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
             } else {
                 return Response.serverError().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             log.error("Error when updating {} with values {}", getDao().getClassName(), entity.toString(), e);
             return Response.serverError().build();
         }
     }
 
     /**
-     * Deletes an entity
-     *
-     * @param id
+     * {@inheritDoc}
      */
+    @Override
     public void delete(String id) {
         log.debug("Deleting {} with ID {}", getDao().getClassName(), id);
         try {
@@ -94,11 +95,9 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
     }
 
     /**
-     * Gets an entity by the external id.
-     *
-     * @param id
-     * @return
+     * {@inheritDoc}
      */
+    @Override
     public Response getById(String id) {
         try {
             log.debug("Getting {} by id: {}", getDao().getClassName(), id);
@@ -108,18 +107,16 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
             } else {
                 return Response.noContent().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             log.debug("Error when getting {} by id: {}", getDao().getClassName(), id);
             return Response.serverError().build();
         }
     }
 
     /**
-     * Gets a list of the entity with filtration
-     *
-     * @param filter
-     * @return
+     * {@inheritDoc}
      */
+    @Override
     public Response getFilteredList(GenericFilter filter) {
         try {
             log.debug("Getting all {} with filter {}", getDao().getClassName(), filter.toString());
@@ -130,17 +127,16 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
             } else {
                 return Response.noContent().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             log.error("Error when getting filtered list {}", e);
             return Response.serverError().build();
         }
     }
 
     /**
-     * Gets all searchfields available in the entity
-     *
-     * @return
+     * {@inheritDoc}
      */
+    @Override
     public Response getSearchFields() {
         log.debug("Getting all search fields for {} ", getDao().getClassName());
         Set<String> searchFields = getDao().getSearchFields();
@@ -148,10 +144,9 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
     }
 
     /**
-     * Creates a Lucene index for the entity
-     *
-     * @return
+     * {@inheritDoc}
      */
+    @Override
     public Response indexEntity() {
         log.debug("Indexing entity {} ", getDao().getClassName());
         return Response.ok(getDao().indexEntity(), MediaType.WILDCARD_TYPE).build();
