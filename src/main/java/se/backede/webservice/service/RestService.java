@@ -2,6 +2,7 @@ package se.backede.webservice.service;
 
 import com.negod.generics.persistence.GenericDao;
 import com.negod.generics.persistence.entity.GenericEntity;
+import com.negod.generics.persistence.exception.DaoException;
 import com.negod.generics.persistence.search.GenericFilter;
 import java.util.List;
 import java.util.Optional;
@@ -32,9 +33,6 @@ public interface RestService<T extends GenericEntity> {
      *
      * @param entity The entity to persist
      * @return The created entity
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
-     * @summary Persists an entity to database
      */
     @Path("/")
     @POST()
@@ -46,16 +44,13 @@ public interface RestService<T extends GenericEntity> {
             } else {
                 return Response.serverError().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             return Response.serverError().build();
         }
     }
 
     /**
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
      * @return Returns all entities
-     * @summary Returns all entitites
      */
     @Path("/")
     @GET()
@@ -67,7 +62,7 @@ public interface RestService<T extends GenericEntity> {
             } else {
                 return Response.noContent().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             return Response.serverError().build();
         }
     }
@@ -77,9 +72,6 @@ public interface RestService<T extends GenericEntity> {
      * @param id
      * @param entity the entity to update
      * @return The created entity
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
-     * @summary Updates an entity
      */
     @Path("/")
     @PUT()
@@ -91,16 +83,13 @@ public interface RestService<T extends GenericEntity> {
             } else {
                 return Response.serverError().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             return Response.serverError().build();
         }
     }
 
     /**
      * @param id the external id of the entity to delete
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
-     * @summary Deletes an entity
      */
     @Path("/")
     @DELETE
@@ -114,9 +103,6 @@ public interface RestService<T extends GenericEntity> {
     /**
      * @param id The external id of the entity
      * @return the requested entity
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
-     * @summary Gets the entity by its id
      */
     @Path("/{id}")
     @GET
@@ -128,7 +114,7 @@ public interface RestService<T extends GenericEntity> {
             } else {
                 return Response.noContent().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             return Response.serverError().build();
         }
     }
@@ -136,9 +122,6 @@ public interface RestService<T extends GenericEntity> {
     /**
      * @param filter The filter for the search
      * @return the filtered list
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
-     * @summary Get all entitites with a fixed listsize
      */
     @Path("/filter")
     @POST
@@ -151,16 +134,13 @@ public interface RestService<T extends GenericEntity> {
             } else {
                 return Response.noContent().build();
             }
-        } catch (Exception e) {
+        } catch (DaoException e) {
             return Response.serverError().build();
         }
     }
 
     /**
      * @return The entitys searchfields
-     * @responseMessage 200 Success
-     * @responseMessage 500 Error
-     * @summary Gets all searchable fieldnames
      */
     @Path("/searchFields")
     @GET
@@ -169,10 +149,14 @@ public interface RestService<T extends GenericEntity> {
         return Response.ok(searchFields, MediaType.APPLICATION_JSON).build();
     }
 
+    /**
+     * 
+     * @return The ok if the index went ok
+     */
     @Path("/index")
     @POST
     default Response indexEntity() {
-        return Response.ok(getDao().indexEntity(), MediaType.WILDCARD_TYPE).build();
+        return Response.ok(getDao().indexEntity(), MediaType.APPLICATION_JSON).build();
     }
 
 }
