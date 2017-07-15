@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public abstract class GenericRestService<T extends GenericEntity> implements RestService<T> {
-
+    
     @Override
     public abstract GenericDao getDao();
 
@@ -68,11 +68,16 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
     public Response update(String id, T entity) {
         log.debug("Updating {} with values {}", getDao().getClassName(), entity.toString());
         try {
-            Optional<T> updatedEntity = getDao().update(entity);
-            if (updatedEntity.isPresent()) {
-                return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
+            if (Optional.ofNullable(id).isPresent()) {
+                entity.setId(id);
+                Optional<T> updatedEntity = getDao().update(entity);
+                if (updatedEntity.isPresent()) {
+                    return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
+                } else {
+                    return Response.serverError().build();
+                }
             } else {
-                return Response.serverError().build();
+                return Response.ok("ID not present in request", MediaType.APPLICATION_JSON).build();
             }
         } catch (DaoException e) {
             log.error("Error when updating {} with values {}", getDao().getClassName(), entity.toString(), e);
@@ -148,7 +153,7 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
     @Override
     public Response indexEntity() {
         log.debug("Indexing entity {} ", getDao().getClassName());
-        return Response.ok(getDao().indexEntity(), MediaType.WILDCARD_TYPE).build();
+        return Response.ok(getDao().indexEntity(), MediaType.APPLICATION_JSON).build();
     }
-
+    
 }
