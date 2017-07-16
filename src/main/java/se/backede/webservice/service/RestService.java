@@ -90,13 +90,18 @@ public interface RestService<T extends GenericEntity> {
 
     /**
      * @param id the external id of the entity to delete
+     * @return 
      */
     @Path("/")
     @DELETE
-    default void delete(String id) {
+    default Response delete(String id) {
         try {
-            getDao().delete(id);
+            if (getDao().delete(id)) {
+                return Response.ok().build();
+            }
+            return Response.serverError().build();
         } catch (Exception e) {
+            return Response.serverError().build();
         }
     }
 
@@ -150,7 +155,7 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
-     * 
+     *
      * @return The ok if the index went ok
      */
     @Path("/index")

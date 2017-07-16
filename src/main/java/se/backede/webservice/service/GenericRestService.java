@@ -7,6 +7,7 @@ import com.negod.generics.persistence.search.GenericFilter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public abstract class GenericRestService<T extends GenericEntity> implements RestService<T> {
-    
+
     @Override
     public abstract GenericDao getDao();
 
@@ -89,12 +90,19 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
      * {@inheritDoc}
      */
     @Override
-    public void delete(String id) {
+    public Response delete(String id) {
         log.debug("Deleting {} with ID {}", getDao().getClassName(), id);
         try {
-            getDao().delete(id);
+            if (getDao().delete(id)) {
+                return Response.ok().build();
+            }
+            return Response.serverError().build();
+        } catch (NotFoundException ex) {
+            log.debug(ex.getMessage());
+            return Response.noContent().build();
         } catch (Exception e) {
             log.error("Error when deleting {} with id {} ", getDao().getClassName(), id, e);
+            return Response.serverError().build();
         }
     }
 
@@ -155,5 +163,5 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
         log.debug("Indexing entity {} ", getDao().getClassName());
         return Response.ok(getDao().indexEntity(), MediaType.APPLICATION_JSON).build();
     }
-    
+
 }
