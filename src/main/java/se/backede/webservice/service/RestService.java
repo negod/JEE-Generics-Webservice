@@ -4,6 +4,7 @@ import com.negod.generics.persistence.GenericDao;
 import com.negod.generics.persistence.entity.GenericEntity;
 import com.negod.generics.persistence.exception.DaoException;
 import com.negod.generics.persistence.search.GenericFilter;
+import com.negod.generics.persistence.update.ObjectUpdate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -17,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -89,8 +91,29 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
+     *
+     * @param id
+     * @param update
+     * @return The created entity
+     */
+    @Path("update/{id}")
+    @PUT()
+    default Response updateObject(@PathParam("id") String id, ObjectUpdate update) {
+        try {
+            Optional<T> updatedEntity = getDao().updateObject(id, update);
+            if (updatedEntity.isPresent()) {
+                return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
+            } else {
+                return Response.serverError().build();
+            }
+        } catch (DaoException e) {
+            return Response.serverError().build();
+        }
+    }
+
+    /**
      * @param id the external id of the entity to delete
-     * @return 
+     * @return
      */
     @Path("/")
     @DELETE
