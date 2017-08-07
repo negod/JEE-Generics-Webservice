@@ -8,6 +8,7 @@ import com.negod.generics.persistence.update.ObjectUpdate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,16 +19,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  * @param <T>
  */
-@Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-@Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+@Stateless
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface RestService<T extends GenericEntity> {
+
+    final Logger log = LoggerFactory.getLogger(RestService.class);
 
     public GenericDao getDao();
 
@@ -37,8 +42,9 @@ public interface RestService<T extends GenericEntity> {
      * @return The created entity
      */
     @Path("/")
-    @POST()
+    @POST
     default Response create(T entity) {
+        log.debug("Creating {} with values {} [ RESTLAYER ]", getDao().getClassName(), entity.toString());
         try {
             Optional<T> createdEntity = getDao().persist(entity);
             if (createdEntity.isPresent()) {
@@ -47,6 +53,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.serverError().build();
             }
         } catch (DaoException e) {
+            log.error("Error when creating {} with values {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), entity.toString(), e);
             return Response.serverError().build();
         }
     }
@@ -55,8 +62,9 @@ public interface RestService<T extends GenericEntity> {
      * @return Returns all entities
      */
     @Path("/")
-    @GET()
+    @GET
     default Response getAll() {
+        log.debug("Getting all of type {} [ RESTLAYER ] " + getDao().getClassName());
         try {
             Optional<List<T>> entityList = getDao().getAll();
             if (entityList.isPresent()) {
@@ -65,6 +73,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.noContent().build();
             }
         } catch (DaoException e) {
+            log.debug("Error when getting all of type {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), e);
             return Response.serverError().build();
         }
     }
@@ -75,17 +84,24 @@ public interface RestService<T extends GenericEntity> {
      * @param entity the entity to update
      * @return The created entity
      */
-    @Path("/")
-    @PUT()
-    default Response update(String id, T entity) {
+    @Path("/{id}")
+    @PUT
+    default Response update(@PathParam("id") String id, T entity) {
+        log.debug("Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), entity.toString());
         try {
-            Optional<T> updatedEntity = getDao().update(entity);
-            if (updatedEntity.isPresent()) {
-                return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
+            if (Optional.ofNullable(id).isPresent()) {
+                entity.setId(id);
+                Optional<T> updatedEntity = getDao().update(entity);
+                if (updatedEntity.isPresent()) {
+                    return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
+                } else {
+                    return Response.serverError().build();
+                }
             } else {
-                return Response.serverError().build();
+                return Response.ok("ID not present in request [ RESTLAYER ]", MediaType.APPLICATION_JSON).build();
             }
         } catch (DaoException e) {
+            log.error("Error when updating {} with values {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), entity.toString(), e);
             return Response.serverError().build();
         }
     }
@@ -97,16 +113,19 @@ public interface RestService<T extends GenericEntity> {
      * @return The created entity
      */
     @Path("update/{id}")
-    @PUT()
+    @PUT
     default Response updateObject(@PathParam("id") String id, ObjectUpdate update) {
+        log.debug("Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), update.toString());
         try {
             Optional<T> updatedEntity = getDao().update(id, update);
             if (updatedEntity.isPresent()) {
                 return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
             } else {
+                log.debug(" Error when Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), update.toString());
                 return Response.serverError().build();
             }
         } catch (DaoException e) {
+            log.debug(" Error when Updating {} with values {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), update.toString());
             return Response.serverError().build();
         }
     }
@@ -115,15 +134,18 @@ public interface RestService<T extends GenericEntity> {
      * @param id the external id of the entity to delete
      * @return
      */
-    @Path("/")
+    @Path("/{id}")
     @DELETE
-    default Response delete(String id) {
+    default Response delete(@PathParam("id") String id) {
+        log.debug("Deleting {} with ID {} [ RESTLAYER ]", getDao().getClassName(), id);
         try {
             if (getDao().delete(id)) {
                 return Response.ok().build();
             }
+            log.error("Error when deleting {} with id {} [ RESTLAYER ]", getDao().getClassName(), id);
             return Response.serverError().build();
         } catch (Exception e) {
+            log.error("Error when deleting {} with id {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), id, e);
             return Response.serverError().build();
         }
     }
@@ -135,6 +157,7 @@ public interface RestService<T extends GenericEntity> {
     @Path("/{id}")
     @GET
     default Response getById(@PathParam("id") String id) {
+        log.debug("Getting {} by id: {} [ RESTLAYER ]", getDao().getClassName(), id);
         try {
             Optional<T> entity = getDao().getById(id);
             if (entity.isPresent()) {
@@ -143,6 +166,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.noContent().build();
             }
         } catch (DaoException e) {
+            log.debug("Error when getting {} by id: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), id, e);
             return Response.serverError().build();
         }
     }
@@ -154,6 +178,7 @@ public interface RestService<T extends GenericEntity> {
     @Path("/filter")
     @POST
     default Response getFilteredList(GenericFilter filter) {
+        log.debug("Getting all {} with filter {} [ RESTLAYER ] ", getDao().getClassName(), filter.toString());
         try {
             Optional<List<T>> responseList = getDao().getAll(filter);
             if (responseList.isPresent()) {
@@ -163,6 +188,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.noContent().build();
             }
         } catch (DaoException e) {
+            log.debug("Error when getting filtered list {} with values: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), filter.toString(), e);
             return Response.serverError().build();
         }
     }
@@ -170,9 +196,10 @@ public interface RestService<T extends GenericEntity> {
     /**
      * @return The entitys searchfields
      */
-    @Path("/searchFields")
+    @Path("/search/fields")
     @GET
     default Response getSearchFields() {
+        log.debug("Getting all search fields for {} [ RESTLAYER ] ", getDao().getClassName());
         Set<String> searchFields = getDao().getSearchFields();
         return Response.ok(searchFields, MediaType.APPLICATION_JSON).build();
     }
@@ -184,6 +211,7 @@ public interface RestService<T extends GenericEntity> {
     @Path("/index")
     @POST
     default Response indexEntity() {
+        log.debug("Indexing entity {} [ RESTLAYER ]", getDao().getClassName());
         return Response.ok(getDao().indexEntity(), MediaType.APPLICATION_JSON).build();
     }
 
