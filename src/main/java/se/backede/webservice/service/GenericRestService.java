@@ -96,7 +96,7 @@ public abstract class GenericRestService<T extends GenericEntity> implements Res
     @Override
     public Response updateObject(@PathParam("id") String id, ObjectUpdate update) {
         try {
-            Optional<T> updatedEntity = getDao().updateObject(id, update);
+            Optional<T> updatedEntity = getDao().update(id, update);
             if (updatedEntity.isPresent()) {
                 return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
             } else {
