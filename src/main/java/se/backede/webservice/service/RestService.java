@@ -180,7 +180,7 @@ public interface RestService<T extends GenericEntity> {
     default Response getFilteredList(GenericFilter filter) {
         log.debug("Getting all {} with filter {} [ RESTLAYER ] ", getDao().getClassName(), filter.toString());
         try {
-            Optional<List<T>> responseList = getDao().getAll(filter);
+            Optional<List<T>> responseList = getDao().search(filter);
             if (responseList.isPresent()) {
                 List<T> entityList = responseList.get();
                 return Response.ok(entityList, MediaType.APPLICATION_JSON).build();
