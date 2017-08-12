@@ -5,6 +5,11 @@ import com.negod.generics.persistence.entity.GenericEntity;
 import com.negod.generics.persistence.exception.DaoException;
 import com.negod.generics.persistence.search.GenericFilter;
 import com.negod.generics.persistence.update.ObjectUpdate;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author Joakim Backede ( joakim.backede@outlook.com )
  * @param <T>
  */
+@Api
 @Stateless
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -41,9 +47,15 @@ public interface RestService<T extends GenericEntity> {
      * @param entity The entity to persist
      * @return The created entity
      */
-    @Path("/")
     @POST
-    default Response create(T entity) {
+    @Path("/")
+    @ApiOperation(value = "create", notes = "Returns the persisted object", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful persisting the entity", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
+    default Response create(@ApiParam(value = "The Object to create", required = true) T entity) {
         log.debug("Creating {} with values {} [ RESTLAYER ]", getDao().getClassName(), entity.toString());
         try {
             Optional<T> createdEntity = getDao().persist(entity);
@@ -61,8 +73,16 @@ public interface RestService<T extends GenericEntity> {
     /**
      * @return Returns all entities
      */
-    @Path("/")
     @GET
+    @Path("/")
+    @ApiOperation(value = "getAll", notes = "Returns a list of Objects", response = Response.class, responseContainer = "List")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class)
+        ,
+        @ApiResponse(code = 204, message = "No entity found", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
     default Response getAll() {
         log.debug("Getting all of type {} [ RESTLAYER ] " + getDao().getClassName());
         try {
@@ -73,7 +93,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.noContent().build();
             }
         } catch (DaoException e) {
-            log.debug("Error when getting all of type {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), e);
+            log.error("Error when getting all of type {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), e);
             return Response.serverError().build();
         }
     }
@@ -84,11 +104,18 @@ public interface RestService<T extends GenericEntity> {
      * @param entity the entity to update
      * @return The created entity
      */
-    @Path("/{id}")
     @PUT
-    default Response update(@PathParam("id") String id, T entity) {
-        log.debug("Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), entity.toString());
+    @Path("/{id}")
+    @ApiOperation(value = "update", notes = "Update the owning object", response = Response.class, responseContainer = "List")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful update of the entity", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")})
+    default Response update(
+            @ApiParam(value = "The id of the Object to update", required = true) @PathParam("id") String id,
+            @ApiParam(value = "The object data to update", required = true) T entity) {
         try {
+            log.debug("Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), entity.toString());
             if (Optional.ofNullable(id).isPresent()) {
                 entity.setId(id);
                 Optional<T> updatedEntity = getDao().update(entity);
@@ -112,9 +139,19 @@ public interface RestService<T extends GenericEntity> {
      * @param update
      * @return The created entity
      */
-    @Path("update/{id}")
     @PUT
-    default Response updateObject(@PathParam("id") String id, ObjectUpdate update) {
+    @Path("update/{id}")
+    @ApiOperation(value = "updateObject", notes = "Add or Delete subobjects to owning object", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful ADD or DELETE of the sub entity", response = Response.class)
+        ,
+        @ApiResponse(code = 204, message = "No entity found to update", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
+    default Response updateObject(
+            @ApiParam(value = "The id of the Object to update", required = true) @PathParam("id") String id,
+            @ApiParam(value = "Information on the object to ADD, DELETE", required = true) ObjectUpdate update) {
         log.debug("Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), update.toString());
         try {
             Optional<T> updatedEntity = getDao().update(id, update);
@@ -122,10 +159,10 @@ public interface RestService<T extends GenericEntity> {
                 return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
             } else {
                 log.debug(" Error when Updating {} with values {} [ RESTLAYER ]", getDao().getClassName(), update.toString());
-                return Response.serverError().build();
+                return Response.noContent().build();
             }
         } catch (DaoException e) {
-            log.debug(" Error when Updating {} with values {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), update.toString());
+            log.error(" Error when Updating {} with values {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), update.toString());
             return Response.serverError().build();
         }
     }
@@ -134,9 +171,16 @@ public interface RestService<T extends GenericEntity> {
      * @param id the external id of the entity to delete
      * @return
      */
-    @Path("/{id}")
     @DELETE
-    default Response delete(@PathParam("id") String id) {
+    @Path("/{id}")
+    @ApiOperation(value = "delete", notes = "deletes an object by its id", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful deletion of the entity", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
+    default Response delete(
+            @ApiParam(value = "The id of the Object to delete", required = true) @PathParam("id") String id) {
         log.debug("Deleting {} with ID {} [ RESTLAYER ]", getDao().getClassName(), id);
         try {
             if (getDao().delete(id)) {
@@ -154,9 +198,18 @@ public interface RestService<T extends GenericEntity> {
      * @param id The external id of the entity
      * @return the requested entity
      */
-    @Path("/{id}")
     @GET
-    default Response getById(@PathParam("id") String id) {
+    @Path("/{id}")
+    @ApiOperation(value = "get", notes = "Gets an object by its id", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class)
+        ,
+        @ApiResponse(code = 204, message = "No entity found", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
+    default Response getById(
+            @ApiParam(value = "The id of the Object to get", required = true) @PathParam("id") String id) {
         log.debug("Getting {} by id: {} [ RESTLAYER ]", getDao().getClassName(), id);
         try {
             Optional<T> entity = getDao().getById(id);
@@ -166,7 +219,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.noContent().build();
             }
         } catch (DaoException e) {
-            log.debug("Error when getting {} by id: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), id, e);
+            log.error("Error when getting {} by id: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), id, e);
             return Response.serverError().build();
         }
     }
@@ -175,9 +228,18 @@ public interface RestService<T extends GenericEntity> {
      * @param filter The filter for the search
      * @return the filtered list
      */
-    @Path("/filter")
     @POST
-    default Response getFilteredList(GenericFilter filter) {
+    @Path("/filter")
+    @ApiOperation(value = "getFilteredList", notes = "Get a filtered list of the owning object", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class)
+        ,
+        @ApiResponse(code = 204, message = "No entities found for the query", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
+    default Response getFilteredList(
+            @ApiParam(value = "The filter to use when querying", required = true) GenericFilter filter) {
         log.debug("Getting all {} with filter {} [ RESTLAYER ] ", getDao().getClassName(), filter.toString());
         try {
             Optional<List<T>> responseList = getDao().search(filter);
@@ -188,7 +250,7 @@ public interface RestService<T extends GenericEntity> {
                 return Response.noContent().build();
             }
         } catch (DaoException e) {
-            log.debug("Error when getting filtered list {} with values: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), filter.toString(), e);
+            log.error("Error when getting filtered list {} with values: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), filter.toString(), e);
             return Response.serverError().build();
         }
     }
@@ -196,23 +258,51 @@ public interface RestService<T extends GenericEntity> {
     /**
      * @return The entitys searchfields
      */
-    @Path("/search/fields")
     @GET
+    @Path("/search/fields")
+    @ApiOperation(value = "getSearchFields", notes = "Get all searchable fields for the owning object", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class)
+        ,
+        @ApiResponse(code = 204, message = "No searchfields found", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
     default Response getSearchFields() {
-        log.debug("Getting all search fields for {} [ RESTLAYER ] ", getDao().getClassName());
-        Set<String> searchFields = getDao().getSearchFields();
-        return Response.ok(searchFields, MediaType.APPLICATION_JSON).build();
+        try {
+            log.debug("Getting all search fields for {} [ RESTLAYER ] ", getDao().getClassName());
+            Set<String> searchFields = getDao().getSearchFields();
+            if (searchFields.isEmpty()) {
+                return Response.noContent().build();
+            } else {
+                return Response.ok(searchFields, MediaType.APPLICATION_JSON).build();
+            }
+        } catch (Exception e) {
+            log.error("Error when getting searchfields for type: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), e);
+            return Response.serverError().build();
+        }
     }
 
     /**
      *
      * @return The ok if the index went ok
      */
-    @Path("/index")
     @POST
+    @Path("/index")
+    @ApiOperation(value = "indexEntity", notes = "Indexes the owning object ( Reindexes Lucene )", response = Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class)
+        ,
+        @ApiResponse(code = 500, message = "Internal server error")}
+    )
     default Response indexEntity() {
-        log.debug("Indexing entity {} [ RESTLAYER ]", getDao().getClassName());
-        return Response.ok(getDao().indexEntity(), MediaType.APPLICATION_JSON).build();
+        try {
+            log.debug("Indexing entity {} [ RESTLAYER ]", getDao().getClassName());
+            return Response.ok(getDao().indexEntity(), MediaType.APPLICATION_JSON).build();
+        } catch (Exception e) {
+            log.error("Error building index for type: {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), e);
+            return Response.serverError().build();
+        }
     }
 
 }
