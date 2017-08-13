@@ -44,12 +44,12 @@ public interface RestService<T extends GenericEntity> {
 
     /**
      *
-     * @param entity The entity to persist
-     * @return The created entity
+     * @param entity
+     * @return
      */
     @POST
     @Path("/")
-    @ApiOperation(value = "create", notes = "Returns the persisted object", response = Response.class)
+    @ApiOperation(value = "create", notes = "Returns the persisted object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful persisting the entity", response = Response.class)
         ,
@@ -71,15 +71,16 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
-     * @return Returns all entities
+     *
+     * @return
      */
     @GET
     @Path("/")
-    @ApiOperation(value = "getAll", notes = "Returns a list of Objects", response = Response.class, responseContainer = "List")
+    @ApiOperation(value = "getAll", notes = "Returns a list of Objects")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class)
+        @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class, responseContainer = "Set")
         ,
-        @ApiResponse(code = 204, message = "No entity found", response = Response.class)
+        @ApiResponse(code = 204, message = "No entity found")
         ,
         @ApiResponse(code = 500, message = "Internal server error")}
     )
@@ -101,14 +102,16 @@ public interface RestService<T extends GenericEntity> {
     /**
      *
      * @param id
-     * @param entity the entity to update
-     * @return The created entity
+     * @param entity
+     * @return
      */
     @PUT
     @Path("/{id}")
-    @ApiOperation(value = "update", notes = "Update the owning object", response = Response.class, responseContainer = "List")
+    @ApiOperation(value = "update", notes = "Update the owning object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful update of the entity", response = Response.class)
+        ,
+        @ApiResponse(code = 204, message = "No entity found for the provided id")
         ,
         @ApiResponse(code = 500, message = "Internal server error")})
     default Response update(
@@ -122,7 +125,7 @@ public interface RestService<T extends GenericEntity> {
                 if (updatedEntity.isPresent()) {
                     return Response.ok(updatedEntity.get(), MediaType.APPLICATION_JSON).build();
                 } else {
-                    return Response.serverError().build();
+                    return Response.noContent().build();
                 }
             } else {
                 return Response.ok("ID not present in request [ RESTLAYER ]", MediaType.APPLICATION_JSON).build();
@@ -137,15 +140,15 @@ public interface RestService<T extends GenericEntity> {
      *
      * @param id
      * @param update
-     * @return The created entity
+     * @return
      */
     @PUT
     @Path("update/{id}")
-    @ApiOperation(value = "updateObject", notes = "Add or Delete subobjects to owning object", response = Response.class)
+    @ApiOperation(value = "updateObject", notes = "Add or Delete subobjects to owning object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful ADD or DELETE of the sub entity", response = Response.class)
         ,
-        @ApiResponse(code = 204, message = "No entity found to update", response = Response.class)
+        @ApiResponse(code = 204, message = "No entity found to update")
         ,
         @ApiResponse(code = 500, message = "Internal server error")}
     )
@@ -168,12 +171,13 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
-     * @param id the external id of the entity to delete
+     *
+     * @param id
      * @return
      */
     @DELETE
     @Path("/{id}")
-    @ApiOperation(value = "delete", notes = "deletes an object by its id", response = Response.class)
+    @ApiOperation(value = "delete", notes = "deletes an object by its id")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful deletion of the entity", response = Response.class)
         ,
@@ -195,16 +199,17 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
-     * @param id The external id of the entity
-     * @return the requested entity
+     *
+     * @param id
+     * @return
      */
     @GET
     @Path("/{id}")
-    @ApiOperation(value = "get", notes = "Gets an object by its id", response = Response.class)
+    @ApiOperation(value = "get", notes = "Gets an object by its id")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class)
         ,
-        @ApiResponse(code = 204, message = "No entity found", response = Response.class)
+        @ApiResponse(code = 204, message = "No entity found")
         ,
         @ApiResponse(code = 500, message = "Internal server error")}
     )
@@ -225,16 +230,17 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
-     * @param filter The filter for the search
-     * @return the filtered list
+     *
+     * @param filter
+     * @return
      */
     @POST
     @Path("/filter")
-    @ApiOperation(value = "getFilteredList", notes = "Get a filtered list of the owning object", response = Response.class)
+    @ApiOperation(value = "getFilteredList", notes = "Get a filtered list of the owning object")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class)
+        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class, responseContainer = "Set")
         ,
-        @ApiResponse(code = 204, message = "No entities found for the query", response = Response.class)
+        @ApiResponse(code = 204, message = "No entities found for the query")
         ,
         @ApiResponse(code = 500, message = "Internal server error")}
     )
@@ -256,15 +262,16 @@ public interface RestService<T extends GenericEntity> {
     }
 
     /**
-     * @return The entitys searchfields
+     *
+     * @return
      */
     @GET
     @Path("/search/fields")
-    @ApiOperation(value = "getSearchFields", notes = "Get all searchable fields for the owning object", response = Response.class)
+    @ApiOperation(value = "getSearchFields", notes = "Get all searchable fields for the owning object")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class)
+        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = String.class, responseContainer = "Set")
         ,
-        @ApiResponse(code = 204, message = "No searchfields found", response = Response.class)
+        @ApiResponse(code = 204, message = "No searchfields found")
         ,
         @ApiResponse(code = 500, message = "Internal server error")}
     )
@@ -285,13 +292,13 @@ public interface RestService<T extends GenericEntity> {
 
     /**
      *
-     * @return The ok if the index went ok
+     * @return
      */
     @POST
     @Path("/index")
-    @ApiOperation(value = "indexEntity", notes = "Indexes the owning object ( Reindexes Lucene )", response = Response.class)
+    @ApiOperation(value = "indexEntity", notes = "Indexes the owning object ( Reindexes Lucene )")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class)
+        @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Boolean.class)
         ,
         @ApiResponse(code = 500, message = "Internal server error")}
     )
