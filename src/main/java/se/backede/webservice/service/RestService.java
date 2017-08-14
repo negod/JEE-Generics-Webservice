@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.backede.webservice.security.Secured;
 
 /**
  *
@@ -47,6 +48,7 @@ public interface RestService<T extends GenericEntity> {
      * @param entity
      * @return
      */
+    @Secured
     @POST
     @Path("/")
     @ApiOperation(value = "create", notes = "Returns the persisted object")
@@ -74,6 +76,7 @@ public interface RestService<T extends GenericEntity> {
      *
      * @return
      */
+    @Secured
     @GET
     @Path("/")
     @ApiOperation(value = "getAll", notes = "Returns a list of Objects")
@@ -105,6 +108,7 @@ public interface RestService<T extends GenericEntity> {
      * @param entity
      * @return
      */
+    @Secured
     @PUT
     @Path("/{id}")
     @ApiOperation(value = "update", notes = "Update the owning object")
@@ -142,6 +146,7 @@ public interface RestService<T extends GenericEntity> {
      * @param update
      * @return
      */
+    @Secured
     @PUT
     @Path("update/{id}")
     @ApiOperation(value = "updateObject", notes = "Add or Delete subobjects to owning object")
@@ -175,6 +180,7 @@ public interface RestService<T extends GenericEntity> {
      * @param id
      * @return
      */
+    @Secured
     @DELETE
     @Path("/{id}")
     @ApiOperation(value = "delete", notes = "deletes an object by its id")
@@ -203,6 +209,7 @@ public interface RestService<T extends GenericEntity> {
      * @param id
      * @return
      */
+    @Secured
     @GET
     @Path("/{id}")
     @ApiOperation(value = "get", notes = "Gets an object by its id")
@@ -234,6 +241,7 @@ public interface RestService<T extends GenericEntity> {
      * @param filter
      * @return
      */
+    @Secured
     @POST
     @Path("/filter")
     @ApiOperation(value = "getFilteredList", notes = "Get a filtered list of the owning object")
@@ -265,6 +273,7 @@ public interface RestService<T extends GenericEntity> {
      *
      * @return
      */
+    @Secured
     @GET
     @Path("/search/fields")
     @ApiOperation(value = "getSearchFields", notes = "Get all searchable fields for the owning object")
@@ -294,6 +303,7 @@ public interface RestService<T extends GenericEntity> {
      *
      * @return
      */
+    @Secured
     @POST
     @Path("/index")
     @ApiOperation(value = "indexEntity", notes = "Indexes the owning object ( Reindexes Lucene )")

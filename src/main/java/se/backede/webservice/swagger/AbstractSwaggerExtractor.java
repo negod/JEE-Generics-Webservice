@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import se.backede.webservice.service.EntityRegistrySingleton;
+import se.backede.webservice.registry.EntityRegistrySingleton;
 import se.backede.webservice.service.RestService;
 
 /**

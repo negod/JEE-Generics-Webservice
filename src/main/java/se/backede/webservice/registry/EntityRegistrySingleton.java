@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service;
+package se.backede.webservice.registry;
 
 import com.negod.generics.persistence.entity.EntityRegistry;
 import javax.annotation.PostConstruct;
