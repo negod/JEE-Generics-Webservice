@@ -55,7 +55,7 @@ public class KeyProvider {
         try {
             Jwts.parser().setSigningKey(KEY).parseClaimsJws(JWTToken);
         } catch (SignatureException e) {
-            log.error("Error when checking if JWT token is ok ErrorMessage: {}", e);
+            log.error("Error when checking if JWT token is ok ErrorMessage: {}", e.getMessage());
             throw new AuthorizationException("JWT token not ok!");
         }
         return true;
