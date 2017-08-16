@@ -25,6 +25,9 @@ import java.util.Set;
 import javax.ejb.EJB;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import se.backede.webservice.constants.PathConstants;
+import se.backede.webservice.constants.ResponseCodeConstants;
+import se.backede.webservice.constants.SwaggerConstants;
 import se.backede.webservice.registry.EntityRegistrySingleton;
 import se.backede.webservice.service.RestService;
 
@@ -78,24 +81,24 @@ public abstract class AbstractSwaggerExtractor {
                             handleRequest(Optional.ofNullable(path.get().getPost()), classTypeForRestService.get(), true);
                             handleRequest(Optional.ofNullable(path.get().getGet()), classTypeForRestService.get(), false);
 
-                            Optional<Path> getByIdPath = Optional.ofNullable(swagger.get().getPath(basePath + "/{id}"));
+                            Optional<Path> getByIdPath = Optional.ofNullable(swagger.get().getPath(basePath + PathConstants.PATH_GET_BY_ID));
                             if (getByIdPath.isPresent()) {
                                 handleRequest(Optional.ofNullable(getByIdPath.get().getGet()), classTypeForRestService.get(), false);
                                 handleRequest(Optional.ofNullable(getByIdPath.get().getPut()), classTypeForRestService.get(), false);
                                 handleRequest(Optional.ofNullable(getByIdPath.get().getDelete()), classTypeForRestService.get(), false);
                             }
 
-                            Optional<Path> filterPath = Optional.ofNullable(swagger.get().getPath(basePath + "/filter"));
+                            Optional<Path> filterPath = Optional.ofNullable(swagger.get().getPath(basePath + PathConstants.PATH_FILTER));
                             if (filterPath.isPresent()) {
                                 handleRequest(Optional.ofNullable(filterPath.get().getPost()), classTypeForRestService.get(), false);
                             }
 
-                            Optional<Path> searchFieldPath = Optional.ofNullable(swagger.get().getPath(basePath + "/search/fields"));
+                            Optional<Path> searchFieldPath = Optional.ofNullable(swagger.get().getPath(basePath + PathConstants.PATH_SEARCH_FIELDS));
                             if (searchFieldPath.isPresent()) {
                                 handleRequest(Optional.ofNullable(searchFieldPath.get().getGet()), new HashSet<String>().getClass(), false);
                             }
 
-                            Optional<Path> objectUpdatePath = Optional.ofNullable(swagger.get().getPath(basePath + "/update/{id}"));
+                            Optional<Path> objectUpdatePath = Optional.ofNullable(swagger.get().getPath(basePath + PathConstants.PATH_UPDATE));
                             if (objectUpdatePath.isPresent()) {
                                 handleRequest(Optional.ofNullable(objectUpdatePath.get().getPut()), classTypeForRestService.get(), false);
                             }
@@ -115,7 +118,7 @@ public abstract class AbstractSwaggerExtractor {
         log.trace("Getting swagger from JSON file from resources , method:getSwaggerFromJson");
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream input = classLoader.getResourceAsStream("swagger.json");
+            InputStream input = classLoader.getResourceAsStream(SwaggerConstants.SWAGGER_FILE);
             String swaggerFile = swaggerFile = IOUtils.toString(input, Charset.defaultCharset());
             SwaggerDeserializationResult readWithInfo = new SwaggerParser().readWithInfo(swaggerFile);
             Swagger swagger = readWithInfo.getSwagger();
@@ -163,13 +166,13 @@ public abstract class AbstractSwaggerExtractor {
     private void setSchemaResponses(Map<String, Response> responses, Class<?> clazz) {
         responses.entrySet().forEach((Map.Entry<String, Response> entry) -> {
             switch (entry.getKey()) {
-                case "200":
+                case ResponseCodeConstants.HTTP_200:
                     entry.getValue().setSchema(PropertyCreator.getInstance().getRefProperty(clazz));
                     break;
-                case "204":
+                case ResponseCodeConstants.HTTP_204:
                     entry.getValue().setSchema(null);
                     break;
-                case "500":
+                case ResponseCodeConstants.HTTP_500:
                     entry.getValue().setSchema(null);
                     break;
                 default:

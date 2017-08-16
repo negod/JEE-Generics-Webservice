@@ -40,7 +40,7 @@ public abstract class Authentication {
     public Response authenticate(Credentials credentials) {
         try {
             if (getDao().authorize(credentials)) {
-                return Response.ok().header(AUTHORIZATION, keyProvider.generateJWT(credentials.getUsername(), uriInfo)).build();
+                return Response.ok().header(AUTHORIZATION, SecurityConstants.BEARER_SCHEME + keyProvider.generateJWT(credentials.getUsername(), uriInfo)).build();
             }
         } catch (AuthorizationException ex) {
             return Response.status(UNAUTHORIZED).build();

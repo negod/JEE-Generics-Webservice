@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.backede.webservice.constants.PathConstants;
 import se.backede.webservice.security.Secured;
 
 /**
@@ -50,7 +51,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @POST
-    @Path("/")
+    @Path(PathConstants.PATH_BASE_PATH)
     @ApiOperation(value = "create", notes = "Returns the persisted object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful persisting the entity", response = Response.class)
@@ -78,7 +79,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @GET
-    @Path("/")
+    @Path(PathConstants.PATH_BASE_PATH)
     @ApiOperation(value = "getAll", notes = "Returns a list of Objects")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class, responseContainer = "Set")
@@ -110,7 +111,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @PUT
-    @Path("/{id}")
+    @Path(PathConstants.PATH_GET_BY_ID)
     @ApiOperation(value = "update", notes = "Update the owning object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful update of the entity", response = Response.class)
@@ -148,7 +149,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @PUT
-    @Path("update/{id}")
+    @Path(PathConstants.PATH_UPDATE)
     @ApiOperation(value = "updateObject", notes = "Add or Delete subobjects to owning object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful ADD or DELETE of the sub entity", response = Response.class)
@@ -182,7 +183,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @DELETE
-    @Path("/{id}")
+    @Path(PathConstants.PATH_GET_BY_ID)
     @ApiOperation(value = "delete", notes = "deletes an object by its id")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful deletion of the entity", response = Response.class)
@@ -211,7 +212,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @GET
-    @Path("/{id}")
+    @Path(PathConstants.PATH_GET_BY_ID)
     @ApiOperation(value = "get", notes = "Gets an object by its id")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of the entity", response = Response.class)
@@ -243,7 +244,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @POST
-    @Path("/filter")
+    @Path(PathConstants.PATH_FILTER)
     @ApiOperation(value = "getFilteredList", notes = "Get a filtered list of the owning object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Response.class, responseContainer = "Set")
@@ -275,7 +276,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @GET
-    @Path("/search/fields")
+    @Path(PathConstants.PATH_SEARCH_FIELDS)
     @ApiOperation(value = "getSearchFields", notes = "Get all searchable fields for the owning object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = String.class, responseContainer = "Set")
@@ -305,7 +306,7 @@ public interface RestService<T extends GenericEntity> {
      */
     @Secured
     @POST
-    @Path("/index")
+    @Path(PathConstants.PATH_INDEX)
     @ApiOperation(value = "indexEntity", notes = "Indexes the owning object ( Reindexes Lucene )")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of the filteref entity list", response = Boolean.class)
