@@ -5,7 +5,6 @@
  */
 package se.backede.webservice.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.negod.generics.persistence.entity.GenericEntity;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,9 +15,8 @@ import lombok.Data;
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
 @Data
-@XmlRootElement()
-@JsonIgnoreProperties({"type"})
-public class TestEntity extends GenericEntity{
+@XmlRootElement
+public class TestEntity extends GenericEntity {
 
     @XmlElement
     private String serviceName;

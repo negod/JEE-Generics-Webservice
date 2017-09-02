@@ -3,14 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.methods.http;
+
+import lombok.Data;
+import se.backede.webservice.security.Credentials;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-@FunctionalInterface
-public interface Update<T> {
+public interface HttpsMethod {
 
-    public T update(T entity);
+    String getPath();
+
+    Credentials getCredentials();
+
+    Class<?> getResponseClass();
 }

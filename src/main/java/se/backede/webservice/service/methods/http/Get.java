@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.methods.http;
+
+import lombok.Data;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  * @param <T>
  */
-@FunctionalInterface
-public interface GetById<T> {
+public abstract class Get<T> implements HttpsMethod {
 
-    public T getById(String id);
+    
 }

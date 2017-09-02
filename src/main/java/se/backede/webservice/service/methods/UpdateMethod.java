@@ -5,15 +5,22 @@
  */
 package se.backede.webservice.service.methods;
 
-import com.negod.generics.persistence.search.GenericFilter;
-import java.util.Set;
+import lombok.Data;
+import se.backede.webservice.security.Credentials;
+import se.backede.webservice.service.methods.http.Post;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  * @param <T>
  */
-public interface GetFilteredList<T> {
+@Data
+public class UpdateMethod<T> implements Post<T> {
 
-    public Set<T> getFilteredList(GenericFilter filter);
+    T requestObject;
+    String id;
+    Credentials credentials;
+    Class<T> responseClass;
+    String path;
+
 }

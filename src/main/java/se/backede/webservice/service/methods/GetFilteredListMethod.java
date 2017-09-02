@@ -5,14 +5,15 @@
  */
 package se.backede.webservice.service.methods;
 
+import com.negod.generics.persistence.search.GenericFilter;
 import java.util.Set;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
+ * @param <T>
  */
-@FunctionalInterface
-public interface GetAll<T> {
+public interface GetFilteredListMethod<T> {
 
-    public Set<T> getAll();
+    public Set<T> getFilteredList(GenericFilter filter);
 }

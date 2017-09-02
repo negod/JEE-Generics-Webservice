@@ -6,7 +6,6 @@
 package se.backede.webservice.service;
 
 import com.negod.generics.persistence.search.GenericFilter;
-import com.negod.generics.persistence.update.ObjectUpdate;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +13,7 @@ import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -24,7 +24,10 @@ import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
 import se.backede.webservice.properties.ApplicationProperty;
 import se.backede.webservice.security.Credentials;
-import se.backede.webservice.service.methods.Create;
+import se.backede.webservice.service.methods.CreateMethod;
+import se.backede.webservice.service.methods.GetByIdMethod;
+import se.backede.webservice.service.methods.UpdateMethod;
+import se.backede.webservice.service.methods.http.Get;
 
 /**
  *
@@ -34,34 +37,34 @@ import se.backede.webservice.service.methods.Create;
 @Slf4j
 @Data
 public abstract class RestClient<T> implements SSLClient {
-
+    
     @Inject
     @ApplicationProperty(name = "keystore.path")
     private String keyStorePath;
-
+    
     private Optional<String> authHeader;
-
+    
     @Override
     public String getKeyStorePath() {
         return keyStorePath;
     }
-
+    
     public abstract String getRootPath();
-
+    
     public void loginAndGetHeaders(Credentials credentials) throws AuthorizationException {
         getSslClient().ifPresent((Client client) -> {
             try {
-
+                
                 WebTarget target = client.target(getRootPath() + "/auth/login");
                 Response response = target.request().post(Entity.entity(credentials, MediaType.APPLICATION_JSON));
-
+                
                 if (response.getStatus() == 200) {
                     String header = (String) response.getMetadata().get(HttpHeaders.AUTHORIZATION).get(0);
                     setAuthHeader(Optional.ofNullable(header));
                 } else {
                     throw new AuthorizationException("Failed to authorize");
                 }
-
+                
             } catch (IllegalArgumentException | NullPointerException e) {
                 log.error("Error when authorizing ERROR: {}", e);
             } catch (AuthorizationException ex) {
@@ -69,7 +72,7 @@ public abstract class RestClient<T> implements SSLClient {
             }
         });
     }
-
+    
     private MultivaluedMap<String, Object> getHeaders(Credentials credentials) throws AuthorizationException {
         loginAndGetHeaders(credentials);
         MultivaluedMap headers = new MultivaluedMapImpl();
@@ -79,27 +82,119 @@ public abstract class RestClient<T> implements SSLClient {
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         return headers;
     }
-
-    Optional<T> create(Create create) throws AuthorizationException, InternalServerException {
+    
+    public Optional<T> create(CreateMethod post) throws AuthorizationException, InternalServerException {
         try {
-
+            
             Optional<Client> sslClient = getSslClient();
-
-            log.error("CREATE OBJECT: {}", create.toString());
-
+            
             if (sslClient.isPresent()) {
-                WebTarget target = sslClient.get().target(getRootPath()/*.concat(create.getPath)*/);
-                Entity<T> data = Entity.entity((T) create.getRequestObject(), MediaType.APPLICATION_JSON_TYPE);
-                log.error("CREATE OBJECT: {}", data.getEntity());
+                WebTarget target = sslClient.get().target(getRootPath().concat(post.getPath()));
+                Entity<T> data = Entity.entity((T) post.getRequestObject(), MediaType.APPLICATION_JSON_TYPE);
                 Response response = target
                         .request()
-                        .headers(getHeaders(create.getCredentials()))
+                        .headers(getHeaders(post.getCredentials()))
                         .accept(MediaType.APPLICATION_JSON)
-                        .post(Entity.entity(create.getRequestObject(), MediaType.APPLICATION_JSON));
-
+                        .post(Entity.entity(post.getRequestObject(), MediaType.APPLICATION_JSON));
+                
                 switch (response.getStatus()) {
                     case 200:
-                        T entityResponse = (T) response.getEntity();
+                        T entityResponse = (T) response.readEntity(post.getResponseClass());
+                        return Optional.ofNullable(entityResponse);
+                    case 401:
+                        throw new AuthorizationException("Not authorized, Got 401 from server");
+                    case 500:
+                        throw new InternalServerException("Got 500 from server");
+                    default:
+                        return Optional.empty();
+                }
+            }
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.error("Error when authorizing ERROR: {}", e);
+        }
+        return Optional.empty();
+    }
+    
+    public Optional<T> update(UpdateMethod update) throws AuthorizationException, InternalServerException {
+        try {
+            
+            Optional<Client> sslClient = getSslClient();
+            
+            if (sslClient.isPresent()) {
+                WebTarget target = sslClient.get().target(getRootPath().concat(update.getPath()).concat("/").concat(update.getId()));
+                Entity<T> data = Entity.entity((T) update.getRequestObject(), MediaType.APPLICATION_JSON_TYPE);
+                Response response = target
+                        .request()
+                        .headers(getHeaders(update.getCredentials()))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .put(Entity.entity(update.getRequestObject(), MediaType.APPLICATION_JSON));
+                
+                switch (response.getStatus()) {
+                    case 200:
+                        T entityResponse = (T) response.readEntity(update.getResponseClass());
+                        return Optional.ofNullable(entityResponse);
+                    case 401:
+                        throw new AuthorizationException("Not authorized, Got 401 from server");
+                    case 500:
+                        throw new InternalServerException("Got 500 from server");
+                    default:
+                        return Optional.empty();
+                }
+            }
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.error("Error when authorizing ERROR: {}", e);
+        }
+        return Optional.empty();
+    }
+    
+    public Optional<Set<T>> getAll(Get getAll) throws AuthorizationException, InternalServerException {
+        try {
+            
+            Optional<Client> sslClient = getSslClient();
+            
+            if (sslClient.isPresent()) {
+                WebTarget target = sslClient.get().target(getRootPath().concat(getAll.getPath()));
+                Response response = target
+                        .request()
+                        .headers(getHeaders(getAll.getCredentials()))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .get();
+                
+                switch (response.getStatus()) {
+                    case 200:
+                        Set<T> entityResponse = (Set<T>) response.readEntity(new GenericType<Set<T>>() {
+                        });
+                        return Optional.ofNullable(entityResponse);
+                    case 401:
+                        throw new AuthorizationException("Not authorized, Got 401 from server");
+                    case 500:
+                        throw new InternalServerException("Got 500 from server");
+                    default:
+                        return Optional.empty();
+                }
+            }
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.error("Error when authorizing ERROR: {}", e);
+        }
+        return Optional.empty();
+    }
+    
+    public Optional<T> getById(GetByIdMethod getById) throws AuthorizationException, InternalServerException {
+        try {
+            
+            Optional<Client> sslClient = getSslClient();
+            
+            if (sslClient.isPresent()) {
+                WebTarget target = sslClient.get().target(getRootPath().concat(getById.getPath()).concat("/").concat(getById.getId()));
+                Response response = target
+                        .request()
+                        .headers(getHeaders(getById.getCredentials()))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .get();
+                
+                switch (response.getStatus()) {
+                    case 200:
+                        T entityResponse = (T) response.readEntity(getById.getResponseClass());
                         return Optional.ofNullable(entityResponse);
                     case 401:
                         throw new AuthorizationException("Not authorized, Got 401 from server");
@@ -115,35 +210,19 @@ public abstract class RestClient<T> implements SSLClient {
         return Optional.empty();
     }
 
-    Set<T> getAll() {
-        return null;
-    }
-
-    T update(T object) {
-        return null;
-    }
-
-    T updateObject(String id, ObjectUpdate update) {
-        return null;
-    }
-
-    T getById(String id) {
-        return null;
-    }
-
     void delete(String id) {
     }
-
+    
     Set<T> getFilteredList(GenericFilter filter) {
         return null;
     }
-
+    
     Set<String> geteSearchFields() {
         return null;
     }
-
+    
     Boolean indexEntity() {
         return null;
     }
-
+    
 }

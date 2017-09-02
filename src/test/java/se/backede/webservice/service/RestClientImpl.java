@@ -15,8 +15,8 @@ public class RestClientImpl extends RestClient<TestEntity> {
 
     @Override
     public String getRootPath() {
-        //return "https://192.168.2.140:8443/registry-1.0-SNAPSHOT/rest";
-        return "http://127.0.0.1:8080/test";
+        return "https://192.168.2.140:8443/registry-1.0-SNAPSHOT/rest";
+        //return "http://127.0.0.1:8080/test";
     }
 
     @Override

@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.methods.http;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
- * @param <T>
  */
-@FunctionalInterface
-public interface Delete<T> {
+public interface Delete extends HttpsMethod {
 
-    public Boolean Delete(T entity);
+    String getId();
 }
