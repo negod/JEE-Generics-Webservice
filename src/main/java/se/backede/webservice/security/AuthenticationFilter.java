@@ -5,6 +5,7 @@
  */
 package se.backede.webservice.security;
 
+import se.backede.webservice.exception.AuthorizationException;
 import java.io.IOException;
 import javax.annotation.Priority;
 import javax.ejb.EJB;

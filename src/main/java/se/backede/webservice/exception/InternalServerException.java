@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.security;
+package se.backede.webservice.exception;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public class AuthorizationException extends Exception {
+public class InternalServerException extends Exception {
 
-    public AuthorizationException(String message) {
+    public InternalServerException(String message) {
         super(message);
     }
 
-    public AuthorizationException(String message, Throwable cause) {
+    public InternalServerException(String message, Throwable cause) {
         super(message, cause);
     }
 

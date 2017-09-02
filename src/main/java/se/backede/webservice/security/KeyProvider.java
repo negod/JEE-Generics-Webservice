@@ -5,6 +5,7 @@
  */
 package se.backede.webservice.security;
 
+import se.backede.webservice.exception.AuthorizationException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;

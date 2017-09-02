@@ -5,6 +5,7 @@
  */
 package se.backede.webservice.security;
 
+import se.backede.webservice.exception.AuthorizationException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;

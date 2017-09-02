@@ -3,24 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.security;
+package se.backede.webservice.service.methods;
 
-import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import lombok.Builder;
 import lombok.Data;
+import se.backede.webservice.security.Credentials;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
+ * @param <T>
  */
 @Data
-@XmlRootElement
-public class Credentials implements Serializable {
+public class Create<T> {
 
-    public Credentials() {
-    }
-    
-    private String username;
-    private String password;
+    T requestObject;
+    Credentials credentials;
+    Class<?> responseClass;
+    String path;
 
 }
