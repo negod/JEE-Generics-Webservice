@@ -5,6 +5,9 @@
  */
 package se.backede.webservice.service;
 
+import com.negod.generics.persistence.update.ObjectUpdate;
+import com.negod.generics.persistence.update.UpdateType;
+import se.backede.webservice.service.client.RestClient;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -18,8 +21,10 @@ import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
 import se.backede.webservice.security.Credentials;
 import se.backede.webservice.service.methods.CreateMethod;
+import se.backede.webservice.service.methods.DeleteMethod;
 import se.backede.webservice.service.methods.GetAllMethod;
 import se.backede.webservice.service.methods.GetByIdMethod;
+import se.backede.webservice.service.methods.ObjectUpdateMethod;
 import se.backede.webservice.service.methods.UpdateMethod;
 
 /**
@@ -57,18 +62,6 @@ public class RestClientIT {
     }
 
     /**
-     * Test of loginAndGetHeaders method, of class RestClient.
-     */
-    @Test
-    public void testLoginAndGetHeders() throws AuthorizationException {
-        RestClient client = new RestClientImpl();
-        Credentials credentials = new Credentials();
-        credentials.setUsername("user");
-        credentials.setPassword("user");
-        client.loginAndGetHeaders(credentials);
-    }
-
-    /**
      * Test of create method, of class RestClient.
      */
     @Test
@@ -89,9 +82,8 @@ public class RestClientIT {
 
         CreateMethod<TestEntity> createObject = new CreateMethod<>();
         createObject.setCredentials(credentials);
-        createObject.setPath("/registry");
+        createObject.setService("registry");
         createObject.setRequestObject(entity);
-        createObject.setResponseClass(TestEntity.class);
 
         return client.create(createObject);
     }
@@ -108,8 +100,7 @@ public class RestClientIT {
 
         GetAllMethod<TestEntity> getAllObject = new GetAllMethod<>();
         getAllObject.setCredentials(credentials);
-        getAllObject.setPath("/registry");
-        getAllObject.setResponseClass(TestEntity.class);
+        getAllObject.setService("registry");
 
         Optional<Set<TestEntity>> all = client.getAll(getAllObject);
 
@@ -134,8 +125,7 @@ public class RestClientIT {
         UpdateMethod<TestEntity> method = new UpdateMethod();
         method.setRequestObject(create.get());
         method.setId(create.get().getId());
-        method.setPath("/registry");
-        method.setResponseClass(TestEntity.class);
+        method.setService("registry");
         method.setCredentials(credentials);
 
         Optional<TestEntity> updatedEntity = client.update(method);
@@ -147,7 +137,10 @@ public class RestClientIT {
     @Test
     public void testGetById() throws AuthorizationException, InternalServerException {
         Optional<TestEntity> create = create();
+        getById(create.get().getId());
+    }
 
+    public Optional<TestEntity> getById(String id) throws AuthorizationException, InternalServerException {
         RestClientImpl client = new RestClientImpl();
 
         Credentials credentials = new Credentials();
@@ -156,21 +149,58 @@ public class RestClientIT {
 
         GetByIdMethod<TestEntity> getByIdMethod = new GetByIdMethod<>();
         getByIdMethod.setCredentials(credentials);
-        getByIdMethod.setPath("/registry");
-        getByIdMethod.setResponseClass(TestEntity.class);
-        getByIdMethod.setId(create.get().getId());
+        getByIdMethod.setService("registry");
+        getByIdMethod.setId(id);
 
-        Optional<TestEntity> all = client.getById(getByIdMethod);
+        return client.getById(getByIdMethod);
+    }
 
-        log.error("Got Object: {}", all.get().toString());
+    @Test
+    public void testUpdateObject() throws AuthorizationException, InternalServerException {
+        RestClient client = new RestClientImpl();
+
+        Credentials credentials = new Credentials();
+        credentials.setUsername("user");
+        credentials.setPassword("user");
+
+        Optional<TestEntity> create = create();
+
+        ObjectUpdate update = new ObjectUpdate();
+        update.setObject("registry");
+        update.setObjectId(create.get().getId());
+        update.setType(UpdateType.ADD);
+
+        ObjectUpdateMethod method = new ObjectUpdateMethod();
+        method.setCredentials(credentials);
+        method.setService("registry");
+        method.setId(create.get().getId());
+        method.setUpdateType(update);
+
+        client.update(method);
     }
 
     /**
      * Test of delete method, of class RestClient.
      */
     @Test
-    public void testDelete() {
+    public void testDelete() throws AuthorizationException, InternalServerException {
+        Credentials credentials = new Credentials();
+        credentials.setUsername("user");
+        credentials.setPassword("user");
+
+        Optional<TestEntity> create = create();
+
         RestClient client = new RestClientImpl();
+        DeleteMethod delete = new DeleteMethod();
+        delete.setCredentials(credentials);
+        delete.setService("registry");
+        delete.setId(create.get().getId());
+
+        client.delete(delete);
+
+        Optional<TestEntity> byId = getById(create.get().getId());
+        assert byId.isPresent() == false;
+
     }
 
     /**

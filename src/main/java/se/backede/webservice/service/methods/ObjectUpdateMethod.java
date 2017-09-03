@@ -3,20 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods.http;
+package se.backede.webservice.service.methods;
 
+import com.negod.generics.persistence.update.ObjectUpdate;
 import lombok.Data;
-import se.backede.webservice.security.Credentials;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public interface HttpsMethod {
+@Data
+public class ObjectUpdateMethod extends UpdateMethod {
 
-    String getPath();
-
-    Credentials getCredentials();
-
-    Class<?> getResponseClass();
+    
+    private ObjectUpdate updateType;
 }

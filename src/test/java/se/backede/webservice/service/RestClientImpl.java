@@ -5,7 +5,7 @@
  */
 package se.backede.webservice.service;
 
-import java.util.Optional;
+import se.backede.webservice.service.client.RestClient;
 
 /**
  *
@@ -15,8 +15,7 @@ public class RestClientImpl extends RestClient<TestEntity> {
 
     @Override
     public String getRootPath() {
-        return "https://192.168.2.140:8443/registry-1.0-SNAPSHOT/rest";
-        //return "http://127.0.0.1:8080/test";
+        return "https://192.168.2.140:8443/registry-1.0-SNAPSHOT/rest/";
     }
 
     @Override
@@ -27,6 +26,11 @@ public class RestClientImpl extends RestClient<TestEntity> {
     @Override
     public String getCertPath() {
         return "C:\\Programmering\\ssl\\backede.se.crt";
+    }
+
+    @Override
+    public String getResourcePath() {
+        return "registry";
     }
 
 }

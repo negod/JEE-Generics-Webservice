@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import javax.ws.rs.core.UriInfo;
+import se.backede.webservice.constants.PathConstants;
 
 /**
  *
@@ -35,7 +36,7 @@ public abstract class Authentication {
     KeyProvider keyProvider;
 
     @POST
-    @Path("/login")
+    @Path(PathConstants.PATH_LOGIN)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response authenticate(Credentials credentials) {

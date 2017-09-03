@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-@Startup
 @Singleton
+@Startup
 public class KeyProvider {
 
     final Logger log = LoggerFactory.getLogger(KeyProvider.class);

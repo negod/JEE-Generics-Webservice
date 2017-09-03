@@ -6,14 +6,16 @@
 package se.backede.webservice.service.methods;
 
 import com.negod.generics.persistence.search.GenericFilter;
-import java.util.Set;
+import lombok.Data;
+import se.backede.webservice.service.methods.https.Get;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  * @param <T>
  */
-public interface GetFilteredListMethod<T> {
+@Data
+public class GetFilteredListMethod<T> extends Get<T> {
 
-    public Set<T> getFilteredList(GenericFilter filter);
+    GenericFilter filter;
 }

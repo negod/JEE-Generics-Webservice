@@ -7,7 +7,7 @@ package se.backede.webservice.service.methods;
 
 import lombok.Data;
 import se.backede.webservice.security.Credentials;
-import se.backede.webservice.service.methods.http.Get;
+import se.backede.webservice.service.methods.https.Get;
 
 /**
  *
@@ -16,9 +16,4 @@ import se.backede.webservice.service.methods.http.Get;
  */
 @Data
 public class GetByIdMethod<T> extends Get<T> {
-
-    String id;
-    Credentials credentials;
-    Class<?> responseClass;
-    String path;
 }

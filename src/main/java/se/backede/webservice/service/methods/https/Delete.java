@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods.http;
+package se.backede.webservice.service.methods.https;
 
-import com.negod.generics.persistence.update.ObjectUpdate;
+import lombok.Data;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public interface Put extends HttpsMethod{
-    
-    ObjectUpdate getObjectUpdate();
-    
+@Data
+public class Delete extends HttpsMethod {
+
+    private String id;
+
 }

@@ -5,13 +5,14 @@
  */
 package se.backede.webservice.service.methods;
 
+import lombok.Data;
+import se.backede.webservice.service.methods.https.Delete;
+
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  * @param <T>
  */
-@FunctionalInterface
-public interface DeleteMethod<T> {
-
-    public Boolean Delete(T entity);
+@Data
+public class DeleteMethod<T> extends Delete {
 }

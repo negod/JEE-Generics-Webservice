@@ -11,11 +11,13 @@ package se.backede.webservice.constants;
  */
 public class PathConstants {
 
+    public static final String ID_IDENTIFIER = "{id}";
     public static final String PATH_BASE_PATH = "/";
     public static final String PATH_GET_BY_ID = "/{id}";
     public static final String PATH_UPDATE = "/update/{id}";
     public static final String PATH_FILTER = "/filter";
     public static final String PATH_SEARCH_FIELDS = "/search/fields";
     public static final String PATH_INDEX = "/search/fields";
+    public static final String PATH_LOGIN = "/login";
 
 }

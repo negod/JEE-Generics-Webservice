@@ -3,6 +3,7 @@ package se.backede.webservice.service;
 import com.negod.generics.persistence.GenericDao;
 import com.negod.generics.persistence.entity.GenericEntity;
 import com.negod.generics.persistence.exception.DaoException;
+import com.negod.generics.persistence.exception.NotFoundException;
 import com.negod.generics.persistence.search.GenericFilter;
 import com.negod.generics.persistence.update.ObjectUpdate;
 import io.swagger.annotations.Api;
@@ -199,7 +200,7 @@ public interface RestService<T extends GenericEntity> {
             }
             log.error("Error when deleting {} with id {} [ RESTLAYER ]", getDao().getClassName(), id);
             return Response.serverError().build();
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
             log.error("Error when deleting {} with id {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), id, e);
             return Response.serverError().build();
         }

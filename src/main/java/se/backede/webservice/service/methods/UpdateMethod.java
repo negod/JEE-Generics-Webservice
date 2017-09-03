@@ -6,8 +6,7 @@
 package se.backede.webservice.service.methods;
 
 import lombok.Data;
-import se.backede.webservice.security.Credentials;
-import se.backede.webservice.service.methods.http.Post;
+import se.backede.webservice.service.methods.https.Put;
 
 /**
  *
@@ -15,12 +14,5 @@ import se.backede.webservice.service.methods.http.Post;
  * @param <T>
  */
 @Data
-public class UpdateMethod<T> implements Post<T> {
-
-    T requestObject;
-    String id;
-    Credentials credentials;
-    Class<T> responseClass;
-    String path;
-
+public class UpdateMethod<T> extends Put<T> {
 }

@@ -6,19 +6,12 @@
 package se.backede.webservice.service.methods;
 
 import lombok.Data;
-import se.backede.webservice.security.Credentials;
-import se.backede.webservice.service.methods.http.Post;
+import se.backede.webservice.service.methods.https.Post;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
 @Data
-public class CreateMethod<T> implements Post<T> {
-
-    T requestObject;
-    Credentials credentials;
-    Class<?> responseClass;
-    String path;
-
+public class CreateMethod<T> extends Post<T> {
 }
