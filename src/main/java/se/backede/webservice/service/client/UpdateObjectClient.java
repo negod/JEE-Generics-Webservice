@@ -22,10 +22,13 @@ import se.backede.webservice.service.methods.ObjectUpdateMethod;
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
+ * @param <T>
  */
 public interface UpdateObjectClient<T> extends LoginClient {
 
     final Logger log = LoggerFactory.getLogger(UpdateObjectClient.class);
+
+    public Class<T> getEntityClass();
 
     public default Optional<T> update(ObjectUpdateMethod objectUpdate) throws AuthorizationException, InternalServerException {
         try {
@@ -49,8 +52,7 @@ public interface UpdateObjectClient<T> extends LoginClient {
 
                 switch (response.getStatus()) {
                     case 200:
-                        T entityResponse = (T) response.readEntity(new GenericType<T>() {
-                        });
+                        T entityResponse = (T) response.readEntity(getEntityClass());
                         return Optional.ofNullable(entityResponse);
                     case 401:
                         throw new AuthorizationException("Not authorized, Got 401 from server");

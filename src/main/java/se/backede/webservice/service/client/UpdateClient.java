@@ -27,6 +27,8 @@ import se.backede.webservice.service.methods.UpdateMethod;
 public interface UpdateClient<T> extends LoginClient {
 
     final Logger log = LoggerFactory.getLogger(UpdateClient.class);
+    
+    
 
     public default Optional<T> update(UpdateMethod update) throws AuthorizationException, InternalServerException {
         try {

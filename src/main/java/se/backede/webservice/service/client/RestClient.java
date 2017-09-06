@@ -20,7 +20,17 @@ import se.backede.webservice.properties.ApplicationProperty;
  */
 @Slf4j
 @Data
-public abstract class RestClient<T> implements LoginClient, CreateClient, UpdateClient, GetAllClient, GetByIdClient, UpdateObjectClient, DeleteClient {
+public abstract class RestClient<T> implements
+        LoginClient,
+        CreateClient<T>,
+        UpdateClient<T>,
+        GetAllClient<T>,
+        GetByIdClient<T>,
+        UpdateObjectClient<T>,
+        DeleteClient,
+        GetFilteredListClient,
+        GetSearchFieldsClient,
+        IndexEntityClient {
 
     @Inject
     @ApplicationProperty(name = "keystore.path")
@@ -42,16 +52,6 @@ public abstract class RestClient<T> implements LoginClient, CreateClient, Update
 
     @Override
     public abstract String getRootPath();
-
-    public abstract String getResourcePath();
-
-    public Optional<T> updateObject() {
-        return null;
-    }
-
-    Set<T> getFilteredList(GenericFilter filter) {
-        return null;
-    }
 
     Set<String> getSearchFields() {
         return null;

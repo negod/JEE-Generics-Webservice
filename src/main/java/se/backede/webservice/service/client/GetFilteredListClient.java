@@ -32,10 +32,9 @@ public interface GetFilteredListClient<T> extends LoginClient {
         try {
 
             Optional<Client> sslClient = getSslClient();
-            String createPath = getRootPath().concat(filteredList.getService()).concat(PathConstants.PATH_FILTER);
+            String filteredListPath = getRootPath().concat(filteredList.getService()).concat(PathConstants.PATH_FILTER);
             if (sslClient.isPresent()) {
-                WebTarget target = sslClient.get().target(createPath);
-                Entity<T> data = Entity.entity((T) filteredList.getFilter(), MediaType.APPLICATION_JSON_TYPE);
+                WebTarget target = sslClient.get().target(filteredListPath);
                 Response response = target
                         .request()
                         .headers(getHeaders(filteredList.getCredentials()))

@@ -5,8 +5,11 @@
  */
 package se.backede.webservice.service;
 
+import com.negod.generics.persistence.search.GenericFilter;
+import com.negod.generics.persistence.search.Pagination;
 import com.negod.generics.persistence.update.ObjectUpdate;
 import com.negod.generics.persistence.update.UpdateType;
+import java.util.HashSet;
 import se.backede.webservice.service.client.RestClient;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +27,9 @@ import se.backede.webservice.service.methods.CreateMethod;
 import se.backede.webservice.service.methods.DeleteMethod;
 import se.backede.webservice.service.methods.GetAllMethod;
 import se.backede.webservice.service.methods.GetByIdMethod;
+import se.backede.webservice.service.methods.GetFilteredListMethod;
+import se.backede.webservice.service.methods.GetSearchFieldsMethod;
+import se.backede.webservice.service.methods.IndexEntityMethod;
 import se.backede.webservice.service.methods.ObjectUpdateMethod;
 import se.backede.webservice.service.methods.UpdateMethod;
 
@@ -133,11 +139,15 @@ public class RestClientIT {
 
     /**
      * Test of getById method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testGetById() throws AuthorizationException, InternalServerException {
         Optional<TestEntity> create = create();
-        getById(create.get().getId());
+        Optional<TestEntity> byId = getById(create.get().getId());
+        assert byId.isPresent();
     }
 
     public Optional<TestEntity> getById(String id) throws AuthorizationException, InternalServerException {
@@ -205,26 +215,86 @@ public class RestClientIT {
 
     /**
      * Test of getFilteredList method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
-    public void testGetFilteredList() {
+    public void testGetFilteredList() throws AuthorizationException, InternalServerException {
         RestClient client = new RestClientImpl();
+
+        Optional<TestEntity> create = create();
+
+        Credentials credentials = new Credentials();
+        credentials.setUsername("user");
+        credentials.setPassword("user");
+
+        GenericFilter filter = new GenericFilter();
+
+        Pagination pagination = new Pagination();
+        pagination.setListSize(10);
+        pagination.setPage(1);
+
+        filter.setGlobalSearchWord("true");
+        filter.setPagination(pagination);
+
+        Set<String> searchFields = new HashSet<>();
+        searchFields.add("online");
+        filter.setSearchFields(searchFields);
+
+        GetFilteredListMethod method = new GetFilteredListMethod();
+        method.setCredentials(credentials);
+        method.setService("registry");
+        method.setFilter(filter);
+
+        Optional<Set<TestEntity>> filteredList = client.getFilteredList(method);
+
+        assert filteredList.get().size() > 1;
     }
 
     /**
      * Test of geteSearchFields method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
-    public void testGeteSearchFields() {
+    public void testGetSearchFields() throws AuthorizationException, InternalServerException {
         RestClient client = new RestClientImpl();
+
+        Credentials credentials = new Credentials();
+        credentials.setUsername("user");
+        credentials.setPassword("user");
+
+        GetSearchFieldsMethod method = new GetSearchFieldsMethod();
+        method.setCredentials(credentials);
+        method.setService("registry");
+
+        Optional<Set<String>> searchFields = client.getSearchFields(method);
+
+        assert searchFields.isPresent();
+        assert searchFields.get().size() > 1;
     }
 
     /**
      * Test of indexEntity method, of class RestClient.
      */
     @Test
-    public void testIndexEntity() {
+    public void testIndexEntity() throws AuthorizationException, InternalServerException {
         RestClient client = new RestClientImpl();
+
+        Credentials credentials = new Credentials();
+        credentials.setUsername("user");
+        credentials.setPassword("user");
+
+        IndexEntityMethod method = new IndexEntityMethod();
+        method.setCredentials(credentials);
+        method.setService("registry");
+
+        Optional<Boolean> indexEntity = client.indexEntity(method);
+
+        assert indexEntity.isPresent();
+        assert indexEntity.get() == Boolean.TRUE;
     }
 
 }

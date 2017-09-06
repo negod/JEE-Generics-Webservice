@@ -5,7 +5,6 @@
  */
 package se.backede.webservice.service.methods;
 
-import com.negod.generics.persistence.search.GenericFilter;
 import lombok.Data;
 import se.backede.webservice.service.methods.https.HttpsMethod;
 
@@ -15,7 +14,6 @@ import se.backede.webservice.service.methods.https.HttpsMethod;
  * @param <T>
  */
 @Data
-public class GetFilteredListMethod<String> extends HttpsMethod {
+public class GetSearchFieldsMethod extends HttpsMethod {
 
-    GenericFilter filter;
 }

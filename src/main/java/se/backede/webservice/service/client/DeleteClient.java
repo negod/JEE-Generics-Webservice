@@ -21,7 +21,7 @@ import se.backede.webservice.service.methods.DeleteMethod;
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public interface DeleteClient<T> extends LoginClient {
+public interface DeleteClient extends LoginClient {
 
     final Logger log = LoggerFactory.getLogger(GetAllClient.class);
 
@@ -53,7 +53,7 @@ public interface DeleteClient<T> extends LoginClient {
         } catch (IllegalArgumentException | NullPointerException e) {
             log.error("Error when authorizing ERROR: {}", e);
         }
-        return Optional.empty();
+        return Optional.of(Boolean.FALSE);
     }
 
 }

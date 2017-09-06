@@ -29,8 +29,8 @@ public class RestClientImpl extends RestClient<TestEntity> {
     }
 
     @Override
-    public String getResourcePath() {
-        return "registry";
+    public Class<TestEntity> getEntityClass() {
+        return TestEntity.class;
     }
 
 }

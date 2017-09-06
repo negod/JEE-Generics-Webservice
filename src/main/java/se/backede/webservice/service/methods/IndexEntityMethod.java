@@ -5,17 +5,12 @@
  */
 package se.backede.webservice.service.methods;
 
-import com.negod.generics.persistence.search.GenericFilter;
-import lombok.Data;
 import se.backede.webservice.service.methods.https.HttpsMethod;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
- * @param <T>
  */
-@Data
-public class GetFilteredListMethod<String> extends HttpsMethod {
-
-    GenericFilter filter;
+public class IndexEntityMethod extends HttpsMethod{
+    
 }

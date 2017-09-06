@@ -306,7 +306,7 @@ public interface RestService<T extends GenericEntity> {
      * @return
      */
     @Secured
-    @POST
+    @GET
     @Path(PathConstants.PATH_INDEX)
     @ApiOperation(value = "indexEntity", notes = "Indexes the owning object ( Reindexes Lucene )")
     @ApiResponses(value = {
