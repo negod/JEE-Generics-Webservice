@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.client.methods;
 
 import lombok.Data;
 import se.backede.webservice.security.Credentials;

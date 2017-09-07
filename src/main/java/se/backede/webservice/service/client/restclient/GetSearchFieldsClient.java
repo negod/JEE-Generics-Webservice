@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.client;
+package se.backede.webservice.service.client.restclient;
 
 import java.util.Optional;
 import java.util.Set;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import se.backede.webservice.constants.PathConstants;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
-import se.backede.webservice.service.methods.GetSearchFieldsMethod;
+import se.backede.webservice.service.client.methods.GetSearchFieldsMethod;
 
 /**
  *

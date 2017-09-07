@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.client;
+package se.backede.webservice.service.client.restclient;
 
 import java.util.Optional;
 import java.util.Set;
+import static javafx.scene.input.KeyCode.T;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -17,35 +19,33 @@ import org.slf4j.LoggerFactory;
 import se.backede.webservice.constants.PathConstants;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
-import se.backede.webservice.service.methods.GetByIdMethod;
+import static se.backede.webservice.service.client.restclient.GetFilteredListClient.log;
+import se.backede.webservice.service.client.methods.IndexEntityMethod;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public interface GetByIdClient<T> extends LoginClient {
+public interface IndexEntityClient extends LoginClient {
 
-    final Logger log = LoggerFactory.getLogger(GetByIdClient.class);
+    final Logger log = LoggerFactory.getLogger(IndexEntityClient.class);
 
-    public Class<T> getEntityClass();
-
-    public default Optional<T> getById(GetByIdMethod getById) throws AuthorizationException, InternalServerException {
+    public default Optional<Boolean> indexEntity(IndexEntityMethod indexEntity) throws AuthorizationException, InternalServerException {
         try {
-            Optional<Client> sslClient = getSslClient();
 
+            Optional<Client> sslClient = getSslClient();
+            String filteredListPath = getRootPath().concat(indexEntity.getService()).concat(PathConstants.PATH_INDEX);
             if (sslClient.isPresent()) {
-                String getByIdPath = getRootPath().concat(getById.getService()).concat(PathConstants.PATH_GET_BY_ID);
-                String getByIdPathWithId = getByIdPath.replace(PathConstants.ID_IDENTIFIER, getById.getId());
-                WebTarget target = sslClient.get().target(getByIdPathWithId);
+                WebTarget target = sslClient.get().target(filteredListPath);
                 Response response = target
                         .request()
-                        .headers(getHeaders(getById.getCredentials()))
+                        .headers(getHeaders(indexEntity.getCredentials()))
                         .accept(MediaType.APPLICATION_JSON)
                         .get();
 
                 switch (response.getStatus()) {
                     case 200:
-                        T entityResponse = (T) response.readEntity(getEntityClass());
+                        Boolean entityResponse = response.readEntity(Boolean.class);
                         return Optional.ofNullable(entityResponse);
                     case 401:
                         throw new AuthorizationException("Not authorized, Got 401 from server");
@@ -58,7 +58,6 @@ public interface GetByIdClient<T> extends LoginClient {
         } catch (IllegalArgumentException | NullPointerException e) {
             log.error("Error when authorizing ERROR: {}", e);
         }
-        return Optional.empty();
+        return Optional.of(Boolean.FALSE);
     }
-
 }

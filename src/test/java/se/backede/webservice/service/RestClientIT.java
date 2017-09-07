@@ -23,15 +23,15 @@ import org.junit.Test;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
 import se.backede.webservice.security.Credentials;
-import se.backede.webservice.service.methods.CreateMethod;
-import se.backede.webservice.service.methods.DeleteMethod;
-import se.backede.webservice.service.methods.GetAllMethod;
-import se.backede.webservice.service.methods.GetByIdMethod;
-import se.backede.webservice.service.methods.GetFilteredListMethod;
-import se.backede.webservice.service.methods.GetSearchFieldsMethod;
-import se.backede.webservice.service.methods.IndexEntityMethod;
-import se.backede.webservice.service.methods.ObjectUpdateMethod;
-import se.backede.webservice.service.methods.UpdateMethod;
+import se.backede.webservice.service.client.methods.CreateMethod;
+import se.backede.webservice.service.client.methods.DeleteMethod;
+import se.backede.webservice.service.client.methods.GetAllMethod;
+import se.backede.webservice.service.client.methods.GetByIdMethod;
+import se.backede.webservice.service.client.methods.GetFilteredListMethod;
+import se.backede.webservice.service.client.methods.GetSearchFieldsMethod;
+import se.backede.webservice.service.client.methods.IndexEntityMethod;
+import se.backede.webservice.service.client.methods.ObjectUpdateMethod;
+import se.backede.webservice.service.client.methods.UpdateMethod;
 
 /**
  *
@@ -135,6 +135,8 @@ public class RestClientIT {
         method.setCredentials(credentials);
 
         Optional<TestEntity> updatedEntity = client.update(method);
+        assert updatedEntity.isPresent();
+
     }
 
     /**
@@ -186,7 +188,9 @@ public class RestClientIT {
         method.setId(create.get().getId());
         method.setUpdateType(update);
 
-        client.update(method);
+        Optional<TestEntity> update1 = client.update(method);
+        assert update1.isPresent();
+        assert update1.get().getId().equals(create.get().getId());
     }
 
     /**

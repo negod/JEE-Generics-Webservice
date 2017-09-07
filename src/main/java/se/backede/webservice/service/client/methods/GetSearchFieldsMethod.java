@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.client.methods;
 
 import lombok.Data;
-import se.backede.webservice.service.methods.https.Put;
+import se.backede.webservice.service.methods.https.HttpsMethod;
 
 /**
  *
@@ -14,5 +14,6 @@ import se.backede.webservice.service.methods.https.Put;
  * @param <T>
  */
 @Data
-public class UpdateMethod<T> extends Put<T> {
+public class GetSearchFieldsMethod extends HttpsMethod {
+
 }

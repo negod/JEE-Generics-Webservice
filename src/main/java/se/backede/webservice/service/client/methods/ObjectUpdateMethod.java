@@ -3,16 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.client.methods;
 
+import com.negod.generics.persistence.update.ObjectUpdate;
 import lombok.Data;
-import se.backede.webservice.service.methods.https.Delete;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
- * @param <T>
  */
 @Data
-public class DeleteMethod<T> extends Delete {
+public class ObjectUpdateMethod extends UpdateMethod {
+
+    
+    private ObjectUpdate updateType;
 }

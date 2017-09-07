@@ -3,42 +3,43 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.client;
+package se.backede.webservice.service.client.restclient;
 
 import java.util.Optional;
 import java.util.Set;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.backede.webservice.constants.PathConstants;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
-import se.backede.webservice.service.methods.GetAllMethod;
+import se.backede.webservice.service.client.methods.GetFilteredListMethod;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public interface GetAllClient<T> extends LoginClient {
+public interface GetFilteredListClient<T> extends LoginClient {
 
-    final Logger log = LoggerFactory.getLogger(GetAllClient.class);
+    final Logger log = LoggerFactory.getLogger(GetFilteredListClient.class);
 
-    public default Optional<Set<T>> getAll(GetAllMethod getAll) throws AuthorizationException, InternalServerException {
+    public default Optional<Set<T>> getFilteredList(GetFilteredListMethod filteredList) throws AuthorizationException, InternalServerException {
         try {
 
             Optional<Client> sslClient = getSslClient();
-
+            String filteredListPath = getRootPath().concat(filteredList.getService()).concat(PathConstants.PATH_FILTER);
             if (sslClient.isPresent()) {
-                String getAllPath = getRootPath().concat(getAll.getService());
-                WebTarget target = sslClient.get().target(getAllPath);
+                WebTarget target = sslClient.get().target(filteredListPath);
                 Response response = target
                         .request()
-                        .headers(getHeaders(getAll.getCredentials()))
+                        .headers(getHeaders(filteredList.getCredentials()))
                         .accept(MediaType.APPLICATION_JSON)
-                        .get();
+                        .post(Entity.entity(filteredList.getFilter(), MediaType.APPLICATION_JSON));
 
                 switch (response.getStatus()) {
                     case 200:

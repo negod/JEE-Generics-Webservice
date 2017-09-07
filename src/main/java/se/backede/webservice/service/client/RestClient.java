@@ -5,6 +5,16 @@
  */
 package se.backede.webservice.service.client;
 
+import se.backede.webservice.service.client.restclient.DeleteClient;
+import se.backede.webservice.service.client.restclient.GetByIdClient;
+import se.backede.webservice.service.client.restclient.IndexEntityClient;
+import se.backede.webservice.service.client.restclient.GetAllClient;
+import se.backede.webservice.service.client.restclient.UpdateClient;
+import se.backede.webservice.service.client.restclient.CreateClient;
+import se.backede.webservice.service.client.restclient.GetSearchFieldsClient;
+import se.backede.webservice.service.client.restclient.LoginClient;
+import se.backede.webservice.service.client.restclient.GetFilteredListClient;
+import se.backede.webservice.service.client.restclient.UpdateObjectClient;
 import com.negod.generics.persistence.search.GenericFilter;
 import java.util.Optional;
 import java.util.Set;

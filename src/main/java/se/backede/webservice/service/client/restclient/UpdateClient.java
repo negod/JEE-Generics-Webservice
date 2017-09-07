@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.client;
+package se.backede.webservice.service.client.restclient;
 
 import java.util.Optional;
-import java.util.Set;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -18,33 +17,39 @@ import org.slf4j.LoggerFactory;
 import se.backede.webservice.constants.PathConstants;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
-import se.backede.webservice.service.methods.GetFilteredListMethod;
+import se.backede.webservice.service.client.methods.UpdateMethod;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
+ * @param <T>
  */
-public interface GetFilteredListClient<T> extends LoginClient {
+public interface UpdateClient<T> extends LoginClient {
 
-    final Logger log = LoggerFactory.getLogger(GetFilteredListClient.class);
+    final Logger log = LoggerFactory.getLogger(UpdateClient.class);
+    
+    public Class<T> getEntityClass();
 
-    public default Optional<Set<T>> getFilteredList(GetFilteredListMethod filteredList) throws AuthorizationException, InternalServerException {
+    public default Optional<T> update(UpdateMethod update) throws AuthorizationException, InternalServerException {
         try {
 
             Optional<Client> sslClient = getSslClient();
-            String filteredListPath = getRootPath().concat(filteredList.getService()).concat(PathConstants.PATH_FILTER);
+
             if (sslClient.isPresent()) {
-                WebTarget target = sslClient.get().target(filteredListPath);
+                String getByIdPath = getRootPath().concat(update.getService()).concat(PathConstants.PATH_GET_BY_ID);
+                String updatePath = getByIdPath.replace(PathConstants.ID_IDENTIFIER, update.getId());
+
+                WebTarget target = sslClient.get().target(updatePath);
+                Entity<T> data = Entity.entity((T) update.getRequestObject(), MediaType.APPLICATION_JSON_TYPE);
                 Response response = target
                         .request()
-                        .headers(getHeaders(filteredList.getCredentials()))
+                        .headers(getHeaders(update.getCredentials()))
                         .accept(MediaType.APPLICATION_JSON)
-                        .post(Entity.entity(filteredList.getFilter(), MediaType.APPLICATION_JSON));
+                        .put(Entity.entity(update.getRequestObject(), MediaType.APPLICATION_JSON));
 
                 switch (response.getStatus()) {
                     case 200:
-                        Set<T> entityResponse = (Set<T>) response.readEntity(new GenericType<Set<T>>() {
-                        });
+                        T entityResponse = (T) response.readEntity(getEntityClass());
                         return Optional.ofNullable(entityResponse);
                     case 401:
                         throw new AuthorizationException("Not authorized, Got 401 from server");

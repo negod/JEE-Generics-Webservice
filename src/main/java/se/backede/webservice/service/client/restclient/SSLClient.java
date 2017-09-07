@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.client;
+package se.backede.webservice.service.client.restclient;
 
 import java.io.File;
 import java.io.FileInputStream;

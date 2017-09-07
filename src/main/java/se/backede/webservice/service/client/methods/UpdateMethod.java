@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service.methods;
+package se.backede.webservice.service.client.methods;
 
 import lombok.Data;
-import se.backede.webservice.service.methods.https.Post;
+import se.backede.webservice.service.methods.https.Put;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
+ * @param <T>
  */
 @Data
-public class CreateMethod<T> extends Post<T> {
+public class UpdateMethod<T> extends Put<T> {
 }
