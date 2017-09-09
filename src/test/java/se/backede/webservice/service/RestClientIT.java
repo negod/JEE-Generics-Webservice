@@ -40,25 +40,6 @@ import se.backede.webservice.service.client.methods.UpdateMethod;
 @Slf4j
 public class RestClientIT {
 
-    public RestClientIT() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of getRootPath method, of class RestClient.
      */
@@ -69,6 +50,9 @@ public class RestClientIT {
 
     /**
      * Test of create method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testCreate() throws AuthorizationException, InternalServerException {
@@ -96,6 +80,9 @@ public class RestClientIT {
 
     /**
      * Test of getAll method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testGetAll() throws AuthorizationException, InternalServerException {
@@ -115,6 +102,9 @@ public class RestClientIT {
 
     /**
      * Test of update method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testUpdate() throws AuthorizationException, InternalServerException {
@@ -195,6 +185,9 @@ public class RestClientIT {
 
     /**
      * Test of delete method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testDelete() throws AuthorizationException, InternalServerException {
@@ -282,6 +275,9 @@ public class RestClientIT {
 
     /**
      * Test of indexEntity method, of class RestClient.
+     *
+     * @throws se.backede.webservice.exception.AuthorizationException
+     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testIndexEntity() throws AuthorizationException, InternalServerException {

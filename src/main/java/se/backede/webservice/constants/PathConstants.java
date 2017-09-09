@@ -18,6 +18,7 @@ public class PathConstants {
     public static final String PATH_FILTER = "/filter";
     public static final String PATH_SEARCH_FIELDS = "/search/fields";
     public static final String PATH_INDEX = "/service/entity/index";
+    public static final String PATH_ONLINE = "/online";
     public static final String PATH_LOGIN = "/login";
 
 }

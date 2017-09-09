@@ -40,9 +40,10 @@ public interface SSLClient {
     public String getCertPath();
 
     public default Optional<Client> getSslClient() {
+
         FileInputStream certFileStream = null;
         FileInputStream keyFileStream = null;
-        
+
         try {
             // load the certificate
             File certFile = new File(getCertPath());
@@ -63,7 +64,6 @@ public interface SSLClient {
             keyManagerFactory.init(keyStore, "noipoiblapla".toCharArray());
 
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            keyStore.setCertificateEntry("192.168.2.140", certificate);
 
             trustManagerFactory.init(keyStore);
             SSLContext sslContext = SSLContext.getInstance("TLS");

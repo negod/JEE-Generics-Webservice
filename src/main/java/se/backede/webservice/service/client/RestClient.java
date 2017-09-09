@@ -63,12 +63,4 @@ public abstract class RestClient<T> implements
     @Override
     public abstract String getRootPath();
 
-    Set<String> getSearchFields() {
-        return null;
-    }
-
-    Boolean indexEntity() {
-        return null;
-    }
-
 }

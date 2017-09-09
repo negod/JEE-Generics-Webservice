@@ -49,7 +49,7 @@ public interface LoginClient extends SSLClient {
             } catch (IllegalArgumentException | NullPointerException e) {
                 log.error("Error when authorizing ERROR: {}", e);
             } catch (AuthorizationException ex) {
-                log.error("Error when authorizing URL: {} , ERROR: {}", getRootPath(), ex);
+                log.error("Error when authorizing URL: {} , ERROR: {}", getRootPath().concat(PathConstants.PATH_LOGIN.replace("/", "")), ex);
             }
         }
         return Optional.empty();

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Singleton
+@ApplicationScoped
 public class PropertyFileResolver {
 
     private Map<String, String> properties = new HashMap<>();
@@ -36,6 +38,11 @@ public class PropertyFileResolver {
 
         HashMap hashMap = new HashMap<>(properties);
         this.properties.putAll(hashMap);
+
+        log.debug("Properties loaded!");
+        properties.entrySet().forEach(prop -> {
+            log.debug("Key: {} Value: {}", prop.getKey(), prop.getValue());
+        });
     }
 
     public String getProperty(String key) {
