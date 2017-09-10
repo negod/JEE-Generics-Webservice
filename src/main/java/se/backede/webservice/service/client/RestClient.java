@@ -38,7 +38,7 @@ public abstract class RestClient<T> implements
         GetByIdClient<T>,
         UpdateObjectClient<T>,
         DeleteClient,
-        GetFilteredListClient,
+        GetFilteredListClient<T>,
         GetSearchFieldsClient,
         IndexEntityClient {
 

@@ -9,11 +9,11 @@ import java.util.Optional;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.backede.webservice.exception.CreateNotPossibleException;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
 import se.backede.webservice.service.client.methods.CreateMethod;
@@ -29,7 +29,7 @@ public interface CreateClient<T> extends LoginClient {
 
     public Class<T> getEntityClass();
 
-    public default Optional<T> create(CreateMethod create) throws AuthorizationException, InternalServerException {
+    public default Optional<T> create(CreateMethod create) throws AuthorizationException, InternalServerException, CreateNotPossibleException {
         try {
 
             Optional<Client> sslClient = getSslClient();
@@ -51,6 +51,8 @@ public interface CreateClient<T> extends LoginClient {
                         throw new AuthorizationException("Not authorized, Got 401 from server");
                     case 500:
                         throw new InternalServerException("Got 500 from server");
+                    case 304:
+                        throw new CreateNotPossibleException("Update not possible, probably constraint violation, Got 304 from server");
                     default:
                         return Optional.empty();
                 }

@@ -18,6 +18,9 @@ import lombok.Data;
 @XmlRootElement
 public class RegistryEntity extends GenericEntity {
 
+    public RegistryEntity() {
+    }
+    
     @XmlElement
     private String serviceName;
     @XmlElement

@@ -5,12 +5,18 @@
  */
 package se.backede.webservice.service.client.restclient;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -28,6 +34,8 @@ public interface GetFilteredListClient<T> extends LoginClient {
 
     final Logger log = LoggerFactory.getLogger(GetFilteredListClient.class);
 
+    public Class<T> getEntityClass();
+
     public default Optional<Set<T>> getFilteredList(GetFilteredListMethod filteredList) throws AuthorizationException, InternalServerException {
         try {
 
@@ -43,9 +51,11 @@ public interface GetFilteredListClient<T> extends LoginClient {
 
                 switch (response.getStatus()) {
                     case 200:
-                        Set<T> entityResponse = (Set<T>) response.readEntity(new GenericType<Set<T>>() {
-                        });
-                        return Optional.ofNullable(entityResponse);
+                        String responseData = response.readEntity(String.class);
+                        ObjectMapper mapper = new ObjectMapper();
+                        CollectionType javaType = mapper.getTypeFactory().constructCollectionType(List.class, getEntityClass());
+                        List<T> asList = (List<T>) mapper.readValue(responseData, javaType);
+                        return Optional.ofNullable(new HashSet<>(asList));
                     case 401:
                         throw new AuthorizationException("Not authorized, Got 401 from server");
                     case 500:
@@ -56,6 +66,8 @@ public interface GetFilteredListClient<T> extends LoginClient {
             }
         } catch (IllegalArgumentException | NullPointerException e) {
             log.error("Error when authorizing ERROR: {}", e);
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(GetFilteredListClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Optional.empty();
     }

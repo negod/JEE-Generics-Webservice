@@ -2,6 +2,7 @@ package se.backede.webservice.service;
 
 import com.negod.generics.persistence.GenericDao;
 import com.negod.generics.persistence.entity.GenericEntity;
+import com.negod.generics.persistence.exception.ConstraintException;
 import com.negod.generics.persistence.exception.DaoException;
 import com.negod.generics.persistence.exception.NotFoundException;
 import com.negod.generics.persistence.search.GenericFilter;
@@ -40,9 +41,9 @@ import se.backede.webservice.security.Secured;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface RestService<T extends GenericEntity> {
-
+    
     final Logger log = LoggerFactory.getLogger(RestService.class);
-
+    
     public GenericDao getDao();
 
     /**
@@ -68,8 +69,11 @@ public interface RestService<T extends GenericEntity> {
             } else {
                 return Response.serverError().build();
             }
+        } catch (ConstraintException ex) {
+            log.error("ConstraintViolation when creating {} with values {} [ RESTLAYER ] Error: {}", getDao().getClassName(), entity.toString(), ex);
+            return Response.status(Response.Status.NOT_MODIFIED).build();
         } catch (DaoException e) {
-            log.error("Error when creating {} with values {} [ RESTLAYER ] ErrorMessage: {}", getDao().getClassName(), entity.toString(), e);
+            log.error("Error when creating {} with values {} [ RESTLAYER ] ErrorMesgetMessagesage: {}", getDao().getClassName(), entity.toString(), e);
             return Response.serverError().build();
         }
     }
@@ -258,9 +262,9 @@ public interface RestService<T extends GenericEntity> {
             @ApiParam(value = "The filter to use when querying", required = true) GenericFilter filter) {
         log.debug("Getting all {} with filter {} [ RESTLAYER ] ", getDao().getClassName(), filter.toString());
         try {
-            Optional<List<T>> responseList = getDao().search(filter);
+            Optional<Set<T>> responseList = getDao().search(filter);
             if (responseList.isPresent()) {
-                List<T> entityList = responseList.get();
+                Set<T> entityList = responseList.get();
                 return Response.ok(entityList, MediaType.APPLICATION_JSON).build();
             } else {
                 return Response.noContent().build();
@@ -323,5 +327,5 @@ public interface RestService<T extends GenericEntity> {
             return Response.serverError().build();
         }
     }
-
+    
 }

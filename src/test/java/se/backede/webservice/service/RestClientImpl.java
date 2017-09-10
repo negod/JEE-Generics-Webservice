@@ -5,13 +5,14 @@
  */
 package se.backede.webservice.service;
 
+import se.backede.webservice.registry.RegistryEntity;
 import se.backede.webservice.service.client.RestClient;
 
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-public class RestClientImpl extends RestClient<TestEntity> {
+public class RestClientImpl extends RestClient<RegistryEntity> {
 
     @Override
     public String getRootPath() {
@@ -29,8 +30,8 @@ public class RestClientImpl extends RestClient<TestEntity> {
     }
 
     @Override
-    public Class<TestEntity> getEntityClass() {
-        return TestEntity.class;
+    public Class<RegistryEntity> getEntityClass() {
+        return RegistryEntity.class;
     }
 
 }
