@@ -3,22 +3,36 @@
     
     <modelVersion>4.0.0</modelVersion>
     
-    <parent>
-        <groupId>se.backede</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.6</version>
-    </parent>
-    
     <groupId>se.backede.generics</groupId>
     <artifactId>webservice</artifactId>
     <version>1.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     
+    <properties>
+        <slf4j.version>1.7.21</slf4j.version>
+        <version.microprofile>2.2</version.microprofile>
+    </properties>
+    
     <dependencies>
+        
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>se.backede.generics</groupId>
             <artifactId>persistence</artifactId>
             <version>1.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

@@ -5,10 +5,10 @@
  */
 package se.backede.webservice.service;
 
-import com.negod.generics.persistence.entity.GenericEntity;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
+import se.backede.generics.persistence.entity.GenericEntity;
 
 /**
  *

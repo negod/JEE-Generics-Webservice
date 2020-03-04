@@ -11,6 +11,7 @@ import se.backede.webservice.service.methods.https.Post;
 /**
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
+ * @param <T>
  */
 @Data
 public class CreateMethod<T> extends Post<T> {

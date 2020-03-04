@@ -5,7 +5,6 @@
  */
 package se.backede.webservice.service.client.restclient;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import java.io.IOException;

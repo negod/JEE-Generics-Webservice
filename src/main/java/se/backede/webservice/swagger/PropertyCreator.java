@@ -7,7 +7,6 @@ package se.backede.webservice.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.negod.generics.persistence.entity.GenericEntity;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.DoubleProperty;
@@ -28,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Path;
 import lombok.extern.slf4j.Slf4j;
+import se.backede.generics.persistence.entity.GenericEntity;
 
 /**
  *

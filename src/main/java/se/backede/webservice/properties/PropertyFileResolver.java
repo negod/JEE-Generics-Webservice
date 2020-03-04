@@ -23,26 +23,31 @@ public class PropertyFileResolver {
     private Map<String, String> properties = new HashMap<>();
 
     @PostConstruct
-    private void init() throws IOException {
+    private void init() {
 
         //matches the property name as defined in the system-properties element in WildFly
         String propertyFile = System.getProperty("application.properties");
-        File file = new File(propertyFile);
-        Properties properties = new Properties();
 
-        try {
-            properties.load(new FileInputStream(file));
-        } catch (IOException e) {
-            log.error("Unable to load properties file", e);
+        if (propertyFile != null && !propertyFile.isEmpty()) {
+            File file = new File(propertyFile);
+            Properties properties = new Properties();
+
+            try {
+                properties.load(new FileInputStream(file));
+            } catch (IOException e) {
+                log.error("Unable to load properties file", e);
+            }
+
+            HashMap hashMap = new HashMap<>(properties);
+            this.properties.putAll(hashMap);
+
+            log.debug("Properties loaded!");
+            properties.entrySet().forEach(prop -> {
+                log.debug("Key: {} Value: {}", prop.getKey(), prop.getValue());
+            });
+        } else {
+            log.error("No propertyfile found!");
         }
-
-        HashMap hashMap = new HashMap<>(properties);
-        this.properties.putAll(hashMap);
-
-        log.debug("Properties loaded!");
-        properties.entrySet().forEach(prop -> {
-            log.debug("Key: {} Value: {}", prop.getKey(), prop.getValue());
-        });
     }
 
     public String getProperty(String key) {

@@ -24,7 +24,7 @@ import se.backede.webservice.constants.PathConstants;
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-@Stateless
+//@Stateless
 public abstract class Authentication {
 
     abstract public AuthorizationDao getDao();

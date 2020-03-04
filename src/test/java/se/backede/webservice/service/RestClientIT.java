@@ -5,18 +5,17 @@
  */
 package se.backede.webservice.service;
 
-import com.negod.generics.persistence.search.GenericFilter;
-import com.negod.generics.persistence.search.Pagination;
-import com.negod.generics.persistence.update.ObjectUpdate;
-import com.negod.generics.persistence.update.UpdateType;
 import java.util.HashSet;
-import java.util.List;
 import se.backede.webservice.service.client.RestClient;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import se.backede.generics.persistence.search.GenericFilter;
+import se.backede.generics.persistence.search.Pagination;
+import se.backede.generics.persistence.update.ObjectUpdate;
+import se.backede.generics.persistence.update.UpdateType;
 import se.backede.webservice.exception.CreateNotPossibleException;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;
@@ -131,8 +130,6 @@ public class RestClientIT {
     /**
      * Test of getById method, of class RestClient.
      *
-     * @throws se.backede.webservice.exception.AuthorizationException
-     * @throws se.backede.webservice.exception.InternalServerException
      */
     @Test
     public void testGetById() throws AuthorizationException, InternalServerException, CreateNotPossibleException {

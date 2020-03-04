@@ -5,8 +5,8 @@
  */
 package se.backede.webservice.service.client.methods;
 
-import com.negod.generics.persistence.search.GenericFilter;
 import lombok.Data;
+import se.backede.generics.persistence.search.GenericFilter;
 import se.backede.webservice.service.methods.https.HttpsMethod;
 
 /**

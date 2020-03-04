@@ -5,10 +5,10 @@
  */
 package se.backede.webservice.registry;
 
-import com.negod.generics.persistence.entity.GenericEntity;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
+import se.backede.generics.persistence.entity.GenericEntity;
 
 /**
  *
@@ -20,7 +20,7 @@ public class RegistryEntity extends GenericEntity {
 
     public RegistryEntity() {
     }
-    
+
     @XmlElement
     private String serviceName;
     @XmlElement

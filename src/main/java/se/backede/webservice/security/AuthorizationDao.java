@@ -13,8 +13,8 @@ import javax.ejb.Stateless;
  *
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
-@LocalBean
-@Stateless
+//@LocalBean
+//@Stateless
 public interface AuthorizationDao {
 
     public Boolean authorize(Credentials creds) throws AuthorizationException;

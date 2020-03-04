@@ -5,12 +5,12 @@
  */
 package se.backede.webservice.registry;
 
-import com.negod.generics.persistence.entity.EntityRegistry;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import se.backede.generics.persistence.entity.EntityRegistry;
 
 /**
  *

@@ -5,8 +5,8 @@
  */
 package se.backede.webservice.service.client.methods;
 
-import com.negod.generics.persistence.update.ObjectUpdate;
 import lombok.Data;
+import se.backede.generics.persistence.update.ObjectUpdate;
 
 /**
  *

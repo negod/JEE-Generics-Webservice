@@ -5,7 +5,6 @@
  */
 package se.backede.webservice.registry;
 
-import com.negod.generics.persistence.search.GenericFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import se.backede.generics.persistence.search.GenericFilter;
 import se.backede.webservice.exception.CreateNotPossibleException;
 import se.backede.webservice.exception.AuthorizationException;
 import se.backede.webservice.exception.InternalServerException;

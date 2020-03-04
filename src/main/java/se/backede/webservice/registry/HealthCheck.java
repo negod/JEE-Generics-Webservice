@@ -19,10 +19,11 @@ import se.backede.webservice.constants.PathConstants;
  * @author Joakim Backede ( joakim.backede@outlook.com )
  */
 @Stateless
+@Path(PathConstants.PATH_ONLINE)
 public class HealthCheck {
 
     @GET
-    @Path(PathConstants.PATH_ONLINE)
+    @Path(PathConstants.PATH_BASE_PATH)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response isOnline() {

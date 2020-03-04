@@ -5,8 +5,6 @@
  */
 package se.backede.webservice.swagger;
 
-import com.negod.generics.persistence.entity.GenericEntity;
-import com.negod.generics.persistence.exception.DaoException;
 import io.swagger.models.AbstractModel;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.properties.Property;
@@ -16,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import lombok.extern.slf4j.Slf4j;
+import se.backede.generics.persistence.entity.GenericEntity;
+import se.backede.generics.persistence.exception.DaoException;
 
 /**
  *
@@ -112,5 +112,4 @@ public class GenericSwaggerModel<T extends GenericEntity> extends AbstractModel 
     public void setDescription(String arg0) {
         description = arg0;
     }
-
 }
