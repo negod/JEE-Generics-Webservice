@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.backede.webservice.service;
+package se.backede.webservice.service.mocks.dto;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import se.backede.generics.persistence.entity.GenericEntity;
 
 /**
@@ -16,12 +18,11 @@ import se.backede.generics.persistence.entity.GenericEntity;
  */
 @Data
 @XmlRootElement
-public class TestEntity extends GenericEntity {
+@Getter
+@Setter
+public class EntityMock extends GenericEntity {
 
     @XmlElement
-    private String serviceName;
-    @XmlElement
-    private String url;
-    @XmlElement
-    private Boolean online;
+    private String name;
+
 }

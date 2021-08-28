@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.backede.generics.persistence.GenericDao;
+import se.backede.generics.persistence.GenericDaoAbs;
 import se.backede.generics.persistence.dto.GenericDto;
 import se.backede.generics.persistence.search.GenericFilter;
 import se.backede.generics.persistence.update.ObjectUpdate;
@@ -34,7 +34,7 @@ public interface SecuredRestService<T extends GenericDto> {
 
     final Logger log = LoggerFactory.getLogger(SecuredRestService.class);
 
-    public GenericDao getDao();
+    public GenericDaoAbs getDao();
 
     /**
      *

@@ -25,6 +25,7 @@ import se.backede.generics.persistence.mapper.BaseMapper;
 import se.backede.generics.persistence.search.GenericFilter;
 import se.backede.generics.persistence.update.ObjectUpdate;
 import se.backede.webservice.constants.PathConstants;
+import se.backede.webservice.exception.NoInputDataException;
 
 /**
  *
@@ -45,7 +46,7 @@ public abstract class RestService<D, E extends GenericEntity> {
 
     /**
      *
-     * @param entity
+     * @param dto
      * @return
      */
     @POST
@@ -56,32 +57,26 @@ public abstract class RestService<D, E extends GenericEntity> {
         @ApiResponse(code = 500, message = "Internal server error")}
     )
     public Response create(@ApiParam(value = "The Object to create", required = true) D dto) {
-        log.debug("Creating {} with values {} [ RESTLAYER ]", getDao().getClassName(), dto.toString());
         try {
 
-            Optional<E> mapFromDtoToEntity = getMapper().mapFromDtoToEntity(dto);
+            Optional.ofNullable(dto).orElseThrow(() -> new NoInputDataException("No data input to handle, DTO is null"));
 
-            if (mapFromDtoToEntity.isPresent()) {
+            log.debug("Creating {} with values {} [ RESTLAYER ]", getDao().getClassName(), dto.toString());
 
-                Optional<E> createdEntity = getDao().persist(mapFromDtoToEntity.get());
-                if (createdEntity.isPresent()) {
+            return getMapper().mapFromDtoToEntity(dto).map((E entity) -> {
+                return getDao().persistEntity(entity);
+            }).get().map((E persisted) -> {
+                return getMapper().mapFromEntityToDto(persisted);
+            }).get().map((D returnedDto) -> {
+                return Response.ok(returnedDto, MediaType.APPLICATION_JSON).build();
+            }).get();
 
-                    Optional<D> mapFromEntityToDto = getMapper().mapFromEntityToDto(createdEntity.get());
-
-                    if (mapFromEntityToDto.isPresent()) {
-
-                        return Response.ok(mapFromEntityToDto.get(), MediaType.APPLICATION_JSON).build();
-                    }
-                } else {
-                    return Response.serverError().build();
-                }
-
-            }
-            return Response.serverError().build();
-
+        } catch (NoInputDataException np) {
+            log.error("Exception when creating {} [ RESTLAYER ] Error: {}", getDao().getClassName(), np.getStackTrace());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (Exception ex) {
-            log.error("ConstraintViolation when creating {} with values {} [ RESTLAYER ] Error: {}", getDao().getClassName(), dto.toString(), ex);
-            return Response.status(Response.Status.NOT_MODIFIED).build();
+            log.error("Exception when creating {} with values {} [ RESTLAYER ] Error: {}", getDao().getClassName(), ex.getStackTrace());
+            return Response.serverError().build();
         }
     }
 
@@ -219,8 +214,7 @@ public abstract class RestService<D, E extends GenericEntity> {
         @ApiResponse(code = 200, message = "Successful deletion of the entity", response = Response.class),
         @ApiResponse(code = 500, message = "Internal server error")}
     )
-    public Response delete(
-            @ApiParam(value = "The id of the Object to delete", required = true) @PathParam("id") String id) {
+    public Response delete(@ApiParam(value = "The id of the Object to delete", required = true) @PathParam("id") String id) {
         log.debug("Deleting {} with ID {} [ RESTLAYER ]", getDao().getClassName(), id);
         try {
             if (getDao().delete(id).isPresent()) {
@@ -247,8 +241,7 @@ public abstract class RestService<D, E extends GenericEntity> {
         @ApiResponse(code = 204, message = "No entity found"),
         @ApiResponse(code = 500, message = "Internal server error")}
     )
-    public Response getById(
-            @ApiParam(value = "The id of the Object to get", required = true) @PathParam("id") String id) {
+    public Response getById(@ApiParam(value = "The id of the Object to get", required = true) @PathParam("id") String id) {
         log.debug("Getting {} by id: {} [ RESTLAYER ]", getDao().getClassName(), id);
         try {
             Optional<E> entity = getDao().getById(id);
